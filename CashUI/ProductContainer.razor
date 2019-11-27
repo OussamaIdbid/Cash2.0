@@ -1,0 +1,75 @@
+﻿@using WebAppCash.CashModel
+@inject IProductService ProductService
+
+
+<div class="mat-layout-grid">
+    <div class="mat-layout-grid-inner">
+
+
+        @if (products == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            @foreach (var product in products)
+            {
+
+                <div class="mat-elevation-z4 product-test mat-layout-grid-cell mat-layout-grid-cell-span-2">
+                    @product.Name
+                </div>
+
+            }
+        }
+    </div>
+
+</div>
+
+
+
+
+
+
+
+@code{
+    [Parameter]
+    public int Id { get; set; }
+
+    public event Action OnChange;
+
+
+    IEnumerable<Product> products;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        products = await ProductService.GetProductsByCategory(Id);
+
+    }
+    public static RenderFragment CustomRender { get; set; }
+    public RenderFragment CreateItem() => builder =>
+    {
+
+        builder.OpenComponent(0, typeof(ReceiptLine));
+        builder.AddAttribute(1, "name", "Test");
+        builder.AddAttribute(2, "amount", 3);
+        builder.AddAttribute(3, "price", 3.89);
+        builder.CloseComponent();
+
+
+    };
+
+
+
+
+
+
+
+
+
+
+
+}
+
+
+

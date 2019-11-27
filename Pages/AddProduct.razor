@@ -1,0 +1,66 @@
+﻿@page "/addproduct"
+@using WebAppCash.CashModel
+@using WebAppCash.CashUI
+@inject IProductService ProductService
+@inject ICategoryService CategoryService
+@inject IJSRuntime JsRuntime
+
+<h2>Create Product</h2>
+<hr />
+<form id='product-add-form'>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <label for="Name" class="control-label">Name</label>
+                <input id='name-input' for="Name" class="form-control" @bind="@product.Name" />
+            </div>
+            <div class="form-group">
+                <label for="Price" class="control-label">Price</label>
+                <input id='price-input' type='number' min='0' max='999' steps='any' ondrop='return false;' onpaste='return false;' onkeypress='return event.charCode >= 46 && event.charCode<=57' for="Price" class="form-control" @bind="@product.Price" />
+            </div>
+            <div class="form-group">
+                <label for="Category" class="control-label">Category</label>
+                <select id='category-input' for="Category" class="form-control" @bind="@product.CategoryId">
+                    <option id="category-placeholder" value="Selecteer categorie"></option>
+                    @foreach (var category in categories)
+                    {
+                        <option value="@category.CategoryId">@category.CategoryName</option>
+
+
+
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-primary" @onclick="@CreateProducts" value="Save" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@code {
+
+    Product product = new Product();
+    IEnumerable<Category> categories = new List<Category>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        categories = await CategoryService.GetCategories();
+    }
+
+    protected async Task CreateProducts()
+    {
+        await ProductService.CreateProduct(product);
+        resetForm();
+
+    }
+
+    async Task resetForm()
+    {
+        await JsRuntime.InvokeVoidAsync(identifier: "emptyFields");
+    }
+}
