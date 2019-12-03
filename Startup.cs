@@ -9,8 +9,8 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using WebAppCash.Data;
-using WebAppCash.CashModel;
+using CashModel;
+using CashUI;
 
 namespace WebAppCash
 {
@@ -29,7 +29,7 @@ namespace WebAppCash
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
+            //services.AddSingleton<WeatherForecastService>();
 
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICategoryService, CategoryService>();

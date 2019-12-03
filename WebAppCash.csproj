@@ -18,10 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="CashModel\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="wwwroot\lib\dx-blazor\.gitignore" />
     <None Include="wwwroot\lib\dx-blazor\dx-blazor.cjs.js" />
     <None Include="wwwroot\lib\dx-blazor\dx-blazor.esm.js" />
@@ -62,5 +58,10 @@
     <None Include="wwwroot\lib\dx-blazor\modules\esm-popup-utils-2e6d89cb.js" />
     <None Include="wwwroot\lib\dx-blazor\modules\esm-roller-bba4c22f.js" />
     <None Include="wwwroot\lib\dx-blazor\modules\esm-scheduler-c9b996d6.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CashModel\CashModel.csproj" />
+    <ProjectReference Include="..\CashUI\CashUI.csproj" />
   </ItemGroup>
 </Project>
