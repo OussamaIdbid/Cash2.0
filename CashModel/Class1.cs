@@ -3,6 +3,6 @@
 namespace CashModel
 {
     public class Class1
-    {
+    {//
     }
 }
