@@ -2,7 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="CashModel\obj\Debug\netstandard2.1\CashModel.AssemblyInfo.cs" />
+    <Compile Remove="CashUI\obj\Debug\netstandard2.1\Razor\_Imports.razor.g.cs" />
+    <Compile Remove="obj\Debug\netcoreapp3.0\WebAppCash.AssemblyInfo.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.30" />
@@ -937,7 +946,6 @@
     <Content Remove="wwwroot\lib\dx-blazor\modules\cjs-combobox-e39421aa.js" />
     <Content Remove="wwwroot\lib\dx-blazor\modules\cjs-dom-utils-6a09eac3.js" />
     <Content Remove="wwwroot\lib\dx-blazor\modules\cjs-dropdowns-5546f970.js" />
-    <Content Remove="CashModel\obj\CashModel.csproj.nuget.dgspec.json" />
     <Content Remove="wwwroot\lib\dx-blazor\.gitignore" />
     <Content Remove="wwwroot\lib\dx-blazor\dx-blazor.cjs.js" />
     <Content Remove="wwwroot\lib\dx-blazor\dx-blazor.css" />

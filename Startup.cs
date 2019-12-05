@@ -9,8 +9,8 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using CashModel;
-using CashUI;
+//using CashModel;
+//using CashUI;
 
 namespace WebAppCash
 {
@@ -31,11 +31,11 @@ namespace WebAppCash
             services.AddServerSideBlazor();
             //services.AddSingleton<WeatherForecastService>();
 
-            services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<ICategoryService, CategoryService>();
+            //services.AddScoped<IProductService, ProductService>();
+            //services.AddScoped<ICategoryService, CategoryService>();
 
-            var sqlConnectionConfiguration = new SqlConnectionConfiguration(Configuration.GetConnectionString("SqlDbContext"));
-            services.AddSingleton(sqlConnectionConfiguration);
+            //var sqlConnectionConfiguration = new SqlConnectionConfiguration(Configuration.GetConnectionString("SqlDbContext"));
+            //services.AddSingleton(sqlConnectionConfiguration);
         }   
 
 

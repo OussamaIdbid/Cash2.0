@@ -1,6 +1,6 @@
 ﻿@page "/cash"
-@using CashModel
-@using CashUI
+@*@using CashModel
+@using CashUI*@
 @inject IJSRuntime JsRuntime
 
     <div id='main-container' class='container d-inline-flex flex-row shadow-lg'>
@@ -12,8 +12,7 @@
                 <i class="material-icons" id='menu-icon'>menu</i>
             </div>
             <div id="product-container" class=''>
-                <ProductCategories OnClick="@RenderComponent"></ProductCategories>
-                @CustomRender
+
 
 
 
@@ -42,39 +41,5 @@
     </div>
 
 @code{
-    public int i = 1;
-    public int amountClicked;
-    List<RenderFragment>
-    list = new List<RenderFragment>();
-        RenderFragment CustomRender { get; set; }
-        RenderFragment CreateItem() => builder =>
-        {
-
-        builder.OpenComponent(0, typeof(ProductContainer));
-        builder.AddAttribute(1, "Id", i);
-        builder.CloseComponent();
-
-
-        };
-        void RenderComponent(MouseEventArgs e)
-        {
-
-
-        CustomRender = CreateItem();
-        getIndexClickedCategory();
-
-
-
-
-
-        }
-        public async Task getIndexClickedCategory()
-        {
-            var response = await JsRuntime.InvokeAsync<int>
-            (identifier: "getButtonIndex", i);
-            //await JsRuntime.InvokeVoidAsync("setElementTextById","indexClicked",response);
-            //Console.WriteLine(index);
-            }
-
 
 }
