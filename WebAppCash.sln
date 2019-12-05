@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppCash", "WebAppCash.csproj", "{3E96128B-A21C-4CAD-B9A3-3B91CFFD2FDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashModel", "CashModel\CashModel.csproj", "{7DBFCEE6-C9B3-43AE-BC06-8025DBF60C9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CashModel", "CashModel\CashModel.csproj", "{7DBFCEE6-C9B3-43AE-BC06-8025DBF60C9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashUI", "CashUI\CashUI.csproj", "{2B7F20AC-B3BC-44C9-BFC5-0A4E42839F7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CashUI", "CashUI\CashUI.csproj", "{2B7F20AC-B3BC-44C9-BFC5-0A4E42839F7B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

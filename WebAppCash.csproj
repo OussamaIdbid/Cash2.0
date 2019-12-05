@@ -60,8 +60,8 @@
     <None Remove="wwwroot\lib\dx-blazor\modules\esm-scheduler-c9b996d6.js" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CashModel\CashModel.csproj" />
-    <ProjectReference Include="..\CashUI\CashUI.csproj" />
+    <ProjectReference Include="CashModel\CashModel.csproj" />
+    <ProjectReference Include="CashUI\CashUI.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\lib\dx-blazor\modules\esm-chunk-6ca2c4f2.js" />
