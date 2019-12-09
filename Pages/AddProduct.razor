@@ -1,9 +1,7 @@
-﻿@page "/addproduct"
-@*@using CashModel
+﻿@using CashModel
 @using CashUI
 @inject IProductService ProductService
-@inject ICategoryService CategoryService*@
-@inject IJSRuntime JsRuntime
+@inject ICategoryService CategoryService
 
 <h2>Create Product</h2>
 <hr />
@@ -12,54 +10,49 @@
         <div class="col-md-8">
             <div class="form-group">
                 <label for="Name" class="control-label">Name</label>
-                @*<inpu t id='name-input' for="Name" class="form-control" @bind="@product.Name" />*@
+                <inpu t id='name-input' for="Name" class="form-control" @bind="@product.Name" />
             </div>
             <div class="form-group">
                 <label for="Price" class="control-label">Price</label>
-                @*<input id='price-input' type='number' min='0' max='999' steps='any' ondrop='return false;' onpaste='return false;' onkeypress='return event.charCode >= 46 && event.charCode<=57' for="Price" class="form-control" @bind="@product.Price" />
+                <input id='price-input' type='number' min='0' max='999' steps='any' ondrop='return false;' onpaste='return false;' onkeypress='return event.charCode >= 46 && event.charCode<=57' for="Price" class="form-control" @bind="@product.Price" />
             </div>*
             <div class="form-group">
                 <label for="Category" class="control-label">Category</label>
-                @*<select id='category-input' for="Category" class="form-control" @bind="@product.CategoryId">*@
+                <select id='category-input' for="Category" class="form-control" @bind="@product.CategoryId">
                     <option id="category-placeholder" value="Selecteer categorie"></option>
-                    @*@foreach (var category in categories)
+                    @foreach (var category in categories)
                     {
                         <option value="@category.CategoryId">@category.CategoryName</option>
 
 
 
                     }
-                </select>*@
+                </select>
             </div>
         </div>
     </div>
-    @*<div class="row">
+    <div class="row">
         <div class="col-md-4">
             <div class="form-group">
-                @*<input type="button" class="btn btn-primary" @onclick="@CreateProducts" value="Save" />
+                <input type="button" class="btn btn-primary" @onclick="@CreateProducts" value="Save" />
             </div>
     </div>
-    </div>*@
+    </div>
 </form>
 
 @code {
-    //Product product = new Product();
-    //IEnumerable<Category> categories = new List<Category>();
+    Product product = new Product();
+    IEnumerable<Category> categories = new List<Category>();
 
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    categories = await CategoryService.GetCategories();
-    //}
+    protected override async Task OnInitializedAsync()
+    {
+        categories = await CategoryService.GetCategories();
+    }
 
-    //protected async Task CreateProducts()
-    //{
-    //    await ProductService.CreateProduct(product);
-    //    resetForm();
+    protected async Task CreateProducts()
+    {
+        await ProductService.CreateProduct(product);
 
-    //}
 
-    //async Task resetForm()
-    //{
-    //    await JsRuntime.InvokeVoidAsync(identifier: "emptyFields");
-    //}
+    }
 }

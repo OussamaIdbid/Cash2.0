@@ -1,0 +1,52 @@
+﻿@inject IProductService ProductService
+
+
+    <div class="mat-layout-grid">
+        <div class="mat-layout-grid-inner">
+
+
+            @if (products == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else
+            {
+                @foreach (var product in products)
+                {
+
+                    <div class="mat-elevation-z4 product-test mat-layout-grid-cell mat-layout-grid-cell-span-2">
+                        @product.Name
+                    </div>
+
+                }
+            }
+        </div>
+
+    </div>
+
+    @code {
+        [Parameter]
+        public int Id { get; set; }
+
+        public event Action OnChange;
+
+        IEnumerable<Product> products;
+
+        //public void NotiftStateChanged() => OnChange?.Invoke();
+
+
+
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+
+                  products = await ProductService.GetProductsByCategory(Id);
+
+            
+        }
+
+    }
+
+
+
+

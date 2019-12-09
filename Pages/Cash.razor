@@ -1,7 +1,4 @@
 ﻿@page "/cash"
-@*@using CashModel
-@using CashUI*@
-@inject IJSRuntime JsRuntime
 
     <div id='main-container' class='container d-inline-flex flex-row shadow-lg'>
 
@@ -12,7 +9,8 @@
                 <i class="material-icons" id='menu-icon'>menu</i>
             </div>
             <div id="product-container" class=''>
-
+                <ProductCategories @ref="category" OnChange="refreshComponent"></ProductCategories>
+                <ProductContainer @ref="container" Id="SelectedId"></ProductContainer>
 
 
 
@@ -41,5 +39,24 @@
     </div>
 
 @code{
+    public int SelectedId;
+    ProductCategories category;
+    ProductContainer container;
+
+    private void refreshComponent()
+    {
+        
+        
+        Console.WriteLine("selected id = " + SelectedId);
+        SelectedId = category.showId();
+        container.OnChange += StateHasChanged;
+        
+        
+        
+        
+
+    }
+
+
 
 }

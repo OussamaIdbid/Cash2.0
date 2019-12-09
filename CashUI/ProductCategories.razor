@@ -1,0 +1,74 @@
+﻿@inject ICategoryService CategoryService
+@inject IProductService ProductService
+
+
+
+@if (categories == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <select @bind="@Id" @onclick="OnChange">
+        @foreach (var category in categories)
+        {
+
+            @*<div class='category-button mat-elevation-z4 mat-layout-grid-cell mat-layout-grid-cell-span-2' @bind @onclick="OnClick">
+                    @category.CategoryId
+                </div>*@
+        
+            <option value="@category.CategoryId" >@category.CategoryName</option>
+ 
+
+
+         }
+       </select>
+    }
+
+
+
+
+        @code{
+
+            public IEnumerable<Category> categories;
+            public int AmountOfCategories;
+            private int id = 0;
+            public int amountClicked;
+
+            public int Id
+            {
+                get { return id; }
+                set
+                {
+                    id = value;
+                    showId();
+                }
+            }
+
+            [Parameter]
+            public int index { get; set; }
+            [Parameter]
+            public EventCallback<ChangeEventArgs> OnClick { get; set; }
+            [Parameter]
+            public EventCallback<MouseEventArgs> OnChange { get; set; }
+
+
+            protected override async Task OnInitializedAsync()
+            {
+                categories = await CategoryService.GetCategories();
+
+
+            }
+            public int showId()
+            {
+                
+                Console.WriteLine(id);
+                return id + 1;
+            }
+
+
+
+
+
+        }
+
