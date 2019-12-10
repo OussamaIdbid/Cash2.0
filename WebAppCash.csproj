@@ -8,11 +8,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="CashModel\obj\Debug\netstandard2.1\CashModel.AssemblyInfo.cs" />
-    <Compile Remove="CashUI\obj\Debug\netstandard2.1\Razor\_Imports.razor.g.cs" />
+    <Compile Remove="CashModel\**" />
+    <Compile Remove="CashUI\**" />
+    <Content Remove="CashModel\**" />
+    <Content Remove="CashUI\**" />
+    <EmbeddedResource Remove="CashModel\**" />
+    <EmbeddedResource Remove="CashUI\**" />
+    <None Remove="CashModel\**" />
+    <None Remove="CashUI\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="obj\Debug\netcoreapp3.0\WebAppCash.AssemblyInfo.cs" />
-    <Compile Remove="CashUI\obj\Debug\netstandard2.1\Razor\ProductCategories.razor.g.cs" />
-    <Compile Remove="CashUI\obj\Debug\netstandard2.1\Razor\ProductContainer.razor.g.cs" />
   </ItemGroup>
 
   <ItemGroup>

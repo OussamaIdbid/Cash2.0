@@ -11,7 +11,7 @@ namespace CashModel
         public string ImageUrl { get; set; }
         public static int AmountOfCategories { get; set; }
         public IList<Product> ListOfProducts { get; set; }
-        public string Text => $"{CategoryName}";
+        
 
     }
 }
