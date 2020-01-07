@@ -1,7 +1,9 @@
-﻿@using CashModel
+﻿@page "/addproduct"
+@using CashModel
 @using CashUI
 @inject IProductService ProductService
 @inject ICategoryService CategoryService
+
 
 <h2>Create Product</h2>
 <hr />
@@ -10,7 +12,7 @@
         <div class="col-md-8">
             <div class="form-group">
                 <label for="Name" class="control-label">Name</label>
-                <inpu t id='name-input' for="Name" class="form-control" @bind="@product.Name" />
+                <input id='name-input' for="Name" class="form-control" @bind="@product.Name" />
             </div>
             <div class="form-group">
                 <label for="Price" class="control-label">Price</label>

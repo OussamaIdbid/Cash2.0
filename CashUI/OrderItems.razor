@@ -1,0 +1,28 @@
+﻿@if (orderItems == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @foreach (var item in orderItems)
+    {
+
+<div class="d-flex flex-column">
+    @item.Name  €@item.Price
+</div>
+    }
+}
+@code {
+
+    [Parameter]
+    public List<Product> orderItems { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        for(int i = 0; i < orderItems.Count; i++)
+        {
+            Console.WriteLine(orderItems[i].Price);
+        }
+    }
+
+}

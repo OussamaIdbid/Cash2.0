@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using CashModel;
 using CashUI;
 using WebAppCash.Data;
+using EmbeddedBlazorContent;
 
 namespace WebAppCash
 {
@@ -56,6 +57,9 @@ namespace WebAppCash
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseEmbeddedBlazorContent(typeof(MatBlazor.BaseMatComponent).Assembly);
+
 
             app.UseRouting();
 

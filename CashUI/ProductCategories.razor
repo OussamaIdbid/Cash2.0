@@ -3,29 +3,30 @@
 @inject IProductService ProductService
 
 
-<DxComboBox Data="@categories" TextFieldName="CategoryName" SelectedItemChanged="@SelectedCategory" SelectedItem="@CurrentCategory" @onclick="OnClick">
+<DxComboBox Data="@categories" TextFieldName="CategoryName" @bind-SelectedItem="@CurrentCategory">
 </DxComboBox>
 
 
 @code {
-    //dddd
-    public Category CurrentCategory { get; set; }
-    public void SelectedCategory(Category categorie)
+
+    public Category currentCategory { get; set; }
+    Category CurrentCategory
     {
-        CurrentCategory = categorie;
-
-
+        get => currentCategory;
+        set
+        {
+            currentCategory = value;
+            Console.Write(value.CategoryId);
+            OnIdChanged.InvokeAsync(value.CategoryId);
+        }
     }
 
-
     public IEnumerable<Category> categories;
-    [Parameter]
-    public EventCallback<MouseEventArgs> OnClick { get; set; }
+    [Parameter] public EventCallback<int> OnIdChanged { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         categories = await CategoryService.GetCategories();
     }
-
 }
 

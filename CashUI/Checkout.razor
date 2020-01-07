@@ -1,0 +1,8 @@
+﻿
+<div id='order-container'>
+    <OrderItems orderItems="@OrderItemList" ></OrderItems>
+</div>
+
+@code {
+    [Parameter] public List<Product> OrderItemList { get; set; }
+}

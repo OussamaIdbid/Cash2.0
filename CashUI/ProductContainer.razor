@@ -1,8 +1,8 @@
 ﻿@inject IProductService ProductService
 
 
-    <div class="mat-layout-grid">
-        <div class="mat-layout-grid-inner">
+    <div class="">
+        <div class="product-container">
 
 
             @if (products == null)
@@ -14,9 +14,9 @@
                 @foreach (var product in products)
                 {
 
-                    <div class="mat-elevation-z4 product-test mat-layout-grid-cell mat-layout-grid-cell-span-2">
+                    <p   class="product-test shadow " @onclick="(() => showName(product))">
                         @product.Name
-                    </div>
+                    </p>
 
                 }
             }
@@ -28,22 +28,46 @@
         [Parameter]
         public int Id { get; set; }
 
+        public Product SelectedProduct { get; set; }
+        public List<Product> orderItems = new List<Product>();
+
+        [Parameter] public EventCallback<List<Product>> OnListChanged { get; set; }
+
+
+        //[Parameter]
+        //public IEnumerable<Product> products { get; set; }
+
+
+
         public event Action OnChange;
 
         IEnumerable<Product> products;
 
-        //public void NotifyStateChanged() => OnChange?.Invoke();
 
-
-
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        protected override async Task OnParametersSetAsync()
         {
 
-                  products = await ProductService.GetProductsByCategory(Id);
+            products = await ProductService.GetProductsByCategory(Id);
 
-            
+
         }
+
+        public string showName(Product product)
+        {
+            Console.WriteLine(product.Name + " " + product.Price);
+
+            orderItems.Add(product);
+            for(int i = 0; i < orderItems.Count; i++)
+            {
+                Console.WriteLine(orderItems[i].Name);
+            }
+
+            OnListChanged.InvokeAsync(orderItems);
+
+
+            return product.Name;
+        }
+
 
     }
 

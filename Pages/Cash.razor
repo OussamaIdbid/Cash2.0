@@ -1,33 +1,24 @@
 ﻿@using CashUI
+@using CashModel
 @page "/cash"
 
     <div id='main-container' class='container d-inline-flex flex-row shadow-lg'>
 
         <div id='left' class='container col-8 justify-content-start'>
             <div id='top-bar' class='d-flex flex-row shadow-lg '>
-
-
                 <i class="material-icons" id='menu-icon'>menu</i>
             </div>
-            <div id="product-container" class=''>
-                <ProductCategories @ref="category" OnClick="refreshComponent"></ProductCategories>
-                <ProductContainer @ref="container" Id="SelectedId"></ProductContainer>
-
-
-
-
-
-            </div>
+            <LeftContainer OnList1Changed="List1Changed"></LeftContainer>
         </div>
 
-
         <div id='right' class='container col-4 bg-white'>
-            <div id='order-container'></div>
+            <Checkout OrderItemList="@CurrentList1">
+            </Checkout>
             <div id='checkout-container'>
                 <div id="price-container" class='text-muted'>
                     <p id='discount'>Discount</p>
                     <p id='subtotal'>Subtotal</p>
-                    <p id='total'>Total</p>
+                    <p id='total'>Total €@totalPrice</p>
                 </div>
                 <div id="checkout-buttons-container">
                     <button type="button" id="cancel-button" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Cancel</button>
@@ -40,31 +31,61 @@
     </div>
 
 @code{
-    public int SelectedId = 0;
-    ProductCategories category;
-    ProductContainer container;
+    public List<Product> CurrentList1 = new List<Product>();
+    public double totalPrice;
 
-    private void refreshComponent()
+    [Parameter] public EventCallback<List<Product>> OnList2Changed { get; set; }
+
+
+    public async void List1Changed(List<Product> List)
     {
-
-
-        if(category.CurrentCategory.CategoryId == null)
+        CurrentList1 = List;
+        await OnList2Changed.InvokeAsync(CurrentList1);
+        totalPrice = 0;
+        for(int i = 0; i < CurrentList1.Count; i++)
         {
-            Console.WriteLine("empty");
-        }
-        else
-        {
-          Console.WriteLine(category.CurrentCategory);
-
+            totalPrice += CurrentList1[i].Price;
         }
 
-        container.OnChange += StateHasChanged;
-
-
-
-
-
+        
     }
+
+
+
+    //public int SelectedId { get; set; } = 1;
+    //ProductCategories category;
+    //public ProductContainer container;
+
+    //public void changeItem(int newItem)
+    //{
+    //    SelectedId = newItem;
+    //    container.setId(newItem);
+
+    //}
+    //private void refreshComponent()
+    //{
+
+    //    //if(category.CurrentCategory == null)
+    //    //{
+    //    //    Console.WriteLine("ifjaifja");
+
+    //    //}
+    //    //else
+    //    //{
+    //    //    SelectedId = category.CurrentCategory.CategoryId;
+    //    //    container.OnChange += StateHasChanged;
+    //    //    Console.WriteLine("selected");
+
+
+    //    //}
+
+    //    container.setId(category.CurrentCategory.CategoryId);
+
+
+
+
+    //}
+
 
 
 

@@ -1,0 +1,32 @@
+﻿@using CashModel
+@inject IProductService ProductService
+
+<div id="product-container" class=''>
+    <ProductCategories OnIdChanged="IdChanged"></ProductCategories>
+    <ProductContainer OnListChanged="ListChanged" Id="SelectedId"></ProductContainer>
+</div>
+
+@code {
+    public int SelectedId = 0;
+    public List<Product> CurrentList = new List<Product>();
+    public IEnumerable<Product> Products;
+    [Parameter] public EventCallback<List<Product>> OnList1Changed { get; set; }
+
+
+    public async void IdChanged(int id)
+    {
+        SelectedId = id;
+    }
+
+    public async void ListChanged(List<Product> List)
+    {
+        CurrentList = List;
+        await OnList1Changed.InvokeAsync(CurrentList);
+    }
+
+
+
+
+
+
+}
