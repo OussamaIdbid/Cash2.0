@@ -4,13 +4,23 @@
 }
 else
 {
-    @foreach (var item in orderItems)
-    {
-
-<div class="d-flex flex-column">
-    @item.Name  €@item.Price
-</div>
-    }
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Prijs</th>   
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item1 in orderItems)
+            {
+                <tr>
+                    <td>@item1.Name</td>
+                    <td>@item1.Price</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 @code {
 
@@ -19,10 +29,10 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-        for(int i = 0; i < orderItems.Count; i++)
-        {
-            Console.WriteLine(orderItems[i].Price);
-        }
+        //for (int i = 0; i < orderItems.Count; i++)
+        //{
+        //    Console.WriteLine(orderItems[i].Price);
+        //}
     }
 
 }

@@ -39,7 +39,7 @@
 
 
 
-        public event Action OnChange;
+        //public event Action OnChange;
 
         IEnumerable<Product> products;
 
@@ -54,13 +54,13 @@
 
         public string showName(Product product)
         {
-            Console.WriteLine(product.Name + " " + product.Price);
+            //Console.WriteLine(product.Name + " " + product.Price);
 
             orderItems.Add(product);
-            for(int i = 0; i < orderItems.Count; i++)
-            {
-                Console.WriteLine(orderItems[i].Name);
-            }
+            //for(int i = 0; i < orderItems.Count; i++)
+            //{
+            //    Console.WriteLine(orderItems[i].Name);
+            //}
 
             OnListChanged.InvokeAsync(orderItems);
 
