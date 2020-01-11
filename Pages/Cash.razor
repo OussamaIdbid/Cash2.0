@@ -12,7 +12,8 @@
         </div>
 
         <div id='right' class='container col-4 bg-white'>
-            <Checkout OrderItemList="@CurrentList1">
+            <Checkout>
+                <OrderItems orderItems="@CurrentList1" ></OrderItems>
             </Checkout>
             <div id='checkout-container'>
                 <div id="price-container" class='text-muted'>
