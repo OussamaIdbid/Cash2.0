@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
@@ -13,6 +13,9 @@ using CashModel;
 using CashUI;
 using WebAppCash.Data;
 using EmbeddedBlazorContent;
+
+
+
 
 namespace WebAppCash
 {
@@ -33,8 +36,10 @@ namespace WebAppCash
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
 
+
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IUserService, UserService>();
 
             var sqlConnectionConfiguration = new SqlConnectionConfiguration(Configuration.GetConnectionString("SqlDbContext"));
             services.AddSingleton(sqlConnectionConfiguration);

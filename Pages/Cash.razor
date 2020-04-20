@@ -3,6 +3,12 @@
 @inject NavigationManager NavigationManager
 @page "/cash"
 
+@if (User.IsloggedIn == false)
+{
+    <p>not logged in</p>
+}
+else
+{
     <div id='main-container' class='container d-inline-flex flex-row shadow-lg'>
 
         <div id='left' class='container col-8 justify-content-start'>
@@ -32,6 +38,10 @@
 
     </div>
 
+}
+
+
+
 @code{
     public List<Product> CurrentList1 = new List<Product>();
     public double totalPrice;
@@ -48,7 +58,6 @@
         {
             totalPrice += CurrentList1[i].Price;
         }
-
 
     }
 
