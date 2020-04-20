@@ -1,5 +1,6 @@
 ﻿@using CashUI
 @using CashModel
+@inject NavigationManager NavigationManager
 @page "/cash"
 
     <div id='main-container' class='container d-inline-flex flex-row shadow-lg'>
@@ -13,7 +14,7 @@
 
         <div id='right' class='container col-4 bg-white'>
             <Checkout>
-                <OrderItems orderItems="@CurrentList1" ></OrderItems>
+                <OrderItems orderItems="@CurrentList1"></OrderItems>
             </Checkout>
             <div id='checkout-container'>
                 <div id="price-container" class='text-muted'>
@@ -43,14 +44,13 @@
         CurrentList1 = List;
         await OnList2Changed.InvokeAsync(CurrentList1);
         totalPrice = 0;
-        for(int i = 0; i < CurrentList1.Count; i++)
+        for (int i = 0; i < CurrentList1.Count; i++)
         {
             totalPrice += CurrentList1[i].Price;
         }
 
-        
-    }
 
+    }
 
 
     //public int SelectedId { get; set; } = 1;

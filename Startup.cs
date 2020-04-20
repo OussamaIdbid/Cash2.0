@@ -58,8 +58,6 @@ namespace WebAppCash
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseEmbeddedBlazorContent(typeof(MatBlazor.BaseMatComponent).Assembly);
-
 
             app.UseRouting();
 
