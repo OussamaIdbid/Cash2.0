@@ -14,6 +14,7 @@ else
         <tbody>
             @foreach (var item1 in orderItems)
             {
+                
                 <tr>
                     <td>@item1.Name</td>
                     <td>€@item1.Price</td>
@@ -27,8 +28,12 @@ else
     [Parameter]
     public List<Product> orderItems { get; set; }
 
+    public List<Product> FilteredorderItems { get; set; }
+
     protected override async Task OnParametersSetAsync()
     {
+
+        orderItems.GroupBy(n => n).Any(c => c.Count() > 1);
         //for (int i = 0; i < orderItems.Count; i++)
         //{
         //    Console.WriteLine(orderItems[i].Price);

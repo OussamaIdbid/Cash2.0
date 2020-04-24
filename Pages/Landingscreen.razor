@@ -3,6 +3,9 @@
 @inject NavigationManager NavigationManager
 @inject IUserService UserService
 @page "/"
+<div class="@classState" role="alert">
+        test
+</div>
 <div class="container">
     <div class="row">
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
@@ -19,17 +22,17 @@
                             <input @bind="@password" id="inputPassword" class="form-control" placeholder="Password" required>
                             <label for="inputPassword">Password</label>
                         </div>
-                        <div class="btn btn-lg btn-primary btn-block text-uppercase"  @onclick ="(() => Auth())"> Sign in</div>
+                        <div class="btn btn-lg btn-light btn-block text-uppercase" @onclick="(() => Auth())">Sign in</div>
                         <hr class="my-4">
-                       
                     </form>
+                    <div class="btn btn-light btn-block text-uppercase" @onclick="(() => Register())">Sign in</div>
+                    
+
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-
 @code{
 
 
@@ -37,19 +40,30 @@
     string password;
     IEnumerable<User> users = new List<User>();
 
+    string classState = "d-none";
+    string responseMessage = "";
+
+
+
     protected override async Task OnInitializedAsync()
     {
         users = await UserService.GetUsers();
 
+
     }
+
 
     void Auth()
     {
 
         foreach (var item in users)
 
-            if(item.Username == username && item.Password == password)
+            if (item.Username == username && decryptString(item.Password) == password)
             {
+                classState = "alert alert-success";
+                //responseMessage = "Login successfull";
+                Task.Delay(3000).Wait();
+                //classState = "";
                 NavigationManager.NavigateTo("/cash");
                 User.IsloggedIn = true;
             }
@@ -60,6 +74,27 @@
         {
 
         }
+
+    }
+    public string decryptString(string encrString)
+    {
+        byte[] b;
+        string decrypted;
+
+        try
+        {
+            b = Convert.FromBase64String(encrString);
+            decrypted = System.Text.ASCIIEncoding.ASCII.GetString(b);
+        }
+        catch(FormatException fe)
+        {
+            decrypted = "";
+        }
+        return decrypted;
+    }
+    void Register()
+    {
+        NavigationManager.NavigateTo("/registration");
 
     }
 }

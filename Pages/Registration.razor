@@ -3,23 +3,25 @@
 @inject NavigationManager NavigationManager
 @inject IUserService UserService
 @page "/registration"
-<!--<div class="container">
+
+
+<div class="container">
     <div class="row">
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
             <div class="card card-signin my-5">
                 <div class="card-body">
-                    <h5 class="card-title text-center">Sign In</h5>
+                    <h5 class="card-title text-center">Registratie</h5>
                     <form class="form-signin">
                         <div class="form-label-group">
-                            <input @bind="@user.Username" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
-                            <label for="inputEmail">Email address</label>
+                            <input @bind="@users.Username" id="inputEmail" class="form-control" placeholder="Username" required autofocus>
+                            <label for="inputEmail">Username</label>
                         </div>
 
                         <div class="form-label-group">
-                            <input @bind="user.Password" id="inputPassword" class="form-control" placeholder="Password" required>
+                            <input @bind="@users.Password" id="inputPassword" class="form-control" placeholder="Password" required>
                             <label for="inputPassword">Password</label>
                         </div>
-                        <div class="btn btn-lg btn-primary btn-block text-uppercase" > Sign in</div>
+                        <div class="btn btn-light btn-block text-uppercase" @onclick="CreateUser">Register</div>
                         <hr class="my-4">
 
                     </form>
@@ -27,36 +29,37 @@
             </div>
         </div>
     </div>
-</div>-->
+</div>
 
-@code {
+@code{
+    User users = new User();
 
-    /*User user = new User { get; set; }
-    IEnumerable<User> users = new List<User>();
+    string password;
 
-    protected override async Task OnInitializedAsync()
+    public string EncryptString(string strEncrypted)
     {
-        users = await UserService.CreateUser(user);
+        byte[] b = System.Text.ASCIIEncoding.ASCII.GetBytes(strEncrypted);
+        Console.WriteLine(b);
+        string encrypted = Convert.ToBase64String(b);
+        Console.WriteLine(encrypted);
+        return encrypted;
+    }
+
+    protected async Task CreateUser()
+    {
+        password = EncryptString(users.Password);
+        users.Password = password;
+
+        Console.WriteLine(users.Password);
+
+        await UserService.CreateUser(users);
+
+        users = new User();
+
+        NavigationManager.NavigateTo("/");
 
     }
 
-    void Auth()
-    {
 
-        foreach (var item in users)
 
-            if (item.Username == username && item.Password == password)
-            {
-                NavigationManager.NavigateTo("/cash");
-                User.IsloggedIn = true;
-            }
-            else
-            {
-                Console.WriteLine("wrong password");
-            }
-        {
-
-        }
-
-    }*/
 }
