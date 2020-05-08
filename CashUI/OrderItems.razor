@@ -8,16 +8,17 @@ else
         <thead>
             <tr>
                 <th>Product</th>
-                <th>Prijs</th>   
+                <th>Prijs</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item1 in orderItems)
             {
-                
+
                 <tr>
                     <td>@item1.Name</td>
                     <td>€@item1.Price</td>
+                    <button @onclick="(() => Remove(item1))">remove</button>
                 </tr>
             }
         </tbody>
@@ -28,12 +29,19 @@ else
     [Parameter]
     public List<Product> orderItems { get; set; }
 
-    public List<Product> FilteredorderItems { get; set; }
+    //public List<Product> FilteredorderItems { get; set; }
 
+    public void Remove(Product product)
+    {
+
+
+        orderItems.Remove(product);
+        Console.WriteLine(orderItems.Count);
+    }
     protected override async Task OnParametersSetAsync()
     {
 
-        orderItems.GroupBy(n => n).Any(c => c.Count() > 1);
+        //orderItems.GroupBy(n => n).Any(c => c.Count() > 1);
         //for (int i = 0; i < orderItems.Count; i++)
         //{
         //    Console.WriteLine(orderItems[i].Price);

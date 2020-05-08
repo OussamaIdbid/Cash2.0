@@ -3,9 +3,7 @@
 @inject NavigationManager NavigationManager
 @inject IUserService UserService
 @page "/"
-<div class="@classState" role="alert">
-        test
-</div>
+
 <div class="container">
     <div class="row">
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
@@ -14,19 +12,19 @@
                     <h5 class="card-title text-center">Sign In</h5>
                     <form class="form-signin">
                         <div class="form-label-group">
-                            <input @bind="@username" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+                            <input @bind="@username" id="inputEmail" autocomplete="off" class="form-control" placeholder="Username" required autofocus>
                             <label for="inputEmail">Email address</label>
                         </div>
 
                         <div class="form-label-group">
-                            <input @bind="@password" id="inputPassword" class="form-control" placeholder="Password" required>
+                            <input @bind="@password" id="inputPassword" type="password" class="form-control" placeholder="Password" required>
                             <label for="inputPassword">Password</label>
                         </div>
                         <div class="btn btn-lg btn-light btn-block text-uppercase" @onclick="(() => Auth())">Sign in</div>
                         <hr class="my-4">
                     </form>
                     <div class="btn btn-light btn-block text-uppercase" @onclick="(() => Register())">Sign in</div>
-                    
+
 
                 </div>
             </div>
@@ -39,11 +37,6 @@
     string username;
     string password;
     IEnumerable<User> users = new List<User>();
-
-    string classState = "d-none";
-    string responseMessage = "";
-
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -60,10 +53,7 @@
 
             if (item.Username == username && decryptString(item.Password) == password)
             {
-                classState = "alert alert-success";
-                //responseMessage = "Login successfull";
                 Task.Delay(3000).Wait();
-                //classState = "";
                 NavigationManager.NavigateTo("/cash");
                 User.IsloggedIn = true;
             }
@@ -71,9 +61,9 @@
             {
                 Console.WriteLine("wrong password");
             }
-        {
 
-        }
+
+
 
     }
     public string decryptString(string encrString)
@@ -86,7 +76,7 @@
             b = Convert.FromBase64String(encrString);
             decrypted = System.Text.ASCIIEncoding.ASCII.GetString(b);
         }
-        catch(FormatException fe)
+        catch (FormatException fe)
         {
             decrypted = "";
         }

@@ -2,6 +2,7 @@
 @using CashUI
 @inject NavigationManager NavigationManager
 @inject IUserService UserService
+@inject IToastService ToastService
 @page "/registration"
 
 
@@ -18,7 +19,7 @@
                         </div>
 
                         <div class="form-label-group">
-                            <input @bind="@users.Password" inputtext type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                            <input @bind="@users.Password" id="inputPassword" class="form-control" placeholder="Password" required>
                             <label for="inputPassword">Password</label>
                         </div>
                         <div class="btn btn-light btn-block text-uppercase" @onclick="CreateUser">Register</div>
@@ -30,13 +31,17 @@
         </div>
     </div>
 </div>
+<button class="btn btn-danger" @onclick="@(() => ToastService.ShowError("I'm an ERROR message"))">Error Toast</button>
+
 
 @code{
     User users = new User();
+    IEnumerable<User> UserList = new List<User>();
 
     string password;
 
-    public string Password(string strEncrypted)
+
+    public string EncryptString(string strEncrypted)
     {
         byte[] b = System.Text.ASCIIEncoding.ASCII.GetBytes(strEncrypted);
         Console.WriteLine(b);
@@ -44,20 +49,70 @@
         Console.WriteLine(encrypted);
         return encrypted;
     }
+    public string decryptString(string encrString)
+    {
+        byte[] b;
+        string decrypted;
+
+        try
+        {
+            b = Convert.FromBase64String(encrString);
+            decrypted = System.Text.ASCIIEncoding.ASCII.GetString(b);
+        }
+        catch (FormatException fe)
+        {
+            decrypted = "";
+        }
+        return decrypted;
+    }
 
     protected async Task CreateUser()
     {
-        password = Password(users.Password);
-        users.Password = password;
 
-        Console.WriteLine(users.Password);
+        foreach (var item in UserList)
+        {
+            item.Password = decryptString(item.Password);
 
-        await UserService.CreateUser(users);
+            if (item.Password == users.Password || item.Username == users.Username)
+            {
 
-        users = new User();
+                ToastService.ShowError("I'm a WARNING message");
 
-        NavigationManager.NavigateTo("/");
+                break;
 
+            }
+            else
+            {
+                if (users.Username == users.Password)
+                {
+                    Console.WriteLine("username and password are the same");
+                    break;
+                }
+                else
+                {
+                    password = EncryptString(users.Password);
+                    users.Password = password;
+
+                    Console.WriteLine(users.Password);
+
+                    await UserService.CreateUser(users);
+
+                    users = new User();
+
+                    NavigationManager.NavigateTo("/");
+
+
+                }
+
+            }
+
+        }
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        UserList = await UserService.GetUsers();
     }
 
 

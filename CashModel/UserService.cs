@@ -14,16 +14,16 @@ namespace CashModel
         {
             _configuration = configuration;
         }
-        public async Task<bool> CreateUser(User users)
+        public async Task<bool> CreateUser(User user)
         {
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                const string query = @"insert into dbo.[User] (Username,Password) values (@Username,@Password)";
+                const string query = @"insert into dbo.User (Username,Password) values (@Username,@Passsword)";
                 if (conn.State == ConnectionState.Closed)
                     conn.Open();
                 try
                 {
-                    await conn.ExecuteAsync(query, new { users.Username, users.Password }, commandType: CommandType.Text);
+                    await conn.ExecuteAsync(query, new { user.Username, user.Password }, commandType: CommandType.Text);
                 }
                 catch (Exception ex)
                 {
