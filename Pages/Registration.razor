@@ -18,7 +18,7 @@
                         </div>
 
                         <div class="form-label-group">
-                            <input @bind="@users.Password" id="inputPassword" class="form-control" placeholder="Password" required>
+                            <input @bind="@users.Password" inputtext type="password" id="inputPassword" class="form-control" placeholder="Password" required>
                             <label for="inputPassword">Password</label>
                         </div>
                         <div class="btn btn-light btn-block text-uppercase" @onclick="CreateUser">Register</div>
@@ -36,7 +36,7 @@
 
     string password;
 
-    public string EncryptString(string strEncrypted)
+    public string Password(string strEncrypted)
     {
         byte[] b = System.Text.ASCIIEncoding.ASCII.GetBytes(strEncrypted);
         Console.WriteLine(b);
@@ -47,7 +47,7 @@
 
     protected async Task CreateUser()
     {
-        password = EncryptString(users.Password);
+        password = Password(users.Password);
         users.Password = password;
 
         Console.WriteLine(users.Password);
