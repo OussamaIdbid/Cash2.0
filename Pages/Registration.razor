@@ -2,7 +2,8 @@
 @using CashUI
 @inject NavigationManager NavigationManager
 @inject IUserService UserService
-@inject IToastService ToastService
+@inject IModalService Modal
+
 @page "/registration"
 
 
@@ -31,10 +32,12 @@
         </div>
     </div>
 </div>
-<button class="btn btn-danger" @onclick="@(() => ToastService.ShowError("I'm an ERROR message"))">Error Toast</button>
+<button @onclick="@(() => Modal.Show<CashUI.Order>("Modal Popup Example"))" class="btn btn-primary">View </button>
+
 
 
 @code{
+    bool PopupVisible { get; set; } = false;
     User users = new User();
     IEnumerable<User> UserList = new List<User>();
 
@@ -76,7 +79,7 @@
             if (item.Password == users.Password || item.Username == users.Username)
             {
 
-                ToastService.ShowError("I'm a WARNING message");
+
 
                 break;
 
