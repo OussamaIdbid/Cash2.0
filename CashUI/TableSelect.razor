@@ -1,0 +1,64 @@
+﻿@inject IModalService ModalService
+@inject ITableService TableService
+
+
+@if (tables == null)
+{
+    <p><em>No Tables found</em></p>
+}
+else
+{
+    <p>Open Tables</p>
+    @foreach (var table in tables)
+    {
+
+        if (table.status == Table.Status.Open)
+        {
+            <p>TableNr: @table.Id</p>
+            <button @onclick="(() => UpdateTable(table))">Close table</button>
+        }
+
+    }
+    <p>Closed Tables</p>
+    @foreach (var table in tables)
+    {
+
+        if (table.status == Table.Status.Taken)
+        {
+            <p>TableNr: @table.Id</p>
+            <button @onclick="(() => UpdateTable(table))">Open table</button>
+        }
+
+    }
+}
+
+@code {
+    IEnumerable<Table> tables;
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+        tables = await TableService.GetTables();
+
+
+    }
+    protected async Task UpdateTable(Table table)
+    {
+        if (table.status == Table.Status.Taken)
+        {
+            Console.WriteLine("Old table is" + table.status);
+            table.status = Table.Status.Open;
+            await TableService.EditTable(table.Id, table);
+            Console.WriteLine("new table is" + table.status);
+        }
+        else
+        {
+            Console.WriteLine("Old table is" + table.status);
+            table.status = Table.Status.Taken;
+            await TableService.EditTable(table.Id, table);
+            Console.WriteLine("new table is" + table.status);
+        }
+
+    }
+
+}
