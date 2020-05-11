@@ -14,9 +14,7 @@ using CashUI;
 using WebAppCash.Data;
 using EmbeddedBlazorContent;
 using Blazored.Modal;
-
-
-
+using Blazored.Toast;
 
 namespace WebAppCash
 {
@@ -47,6 +45,7 @@ namespace WebAppCash
             var sqlConnectionConfiguration = new SqlConnectionConfiguration(Configuration.GetConnectionString("SqlDbContext"));
             services.AddSingleton(sqlConnectionConfiguration);
             services.AddBlazoredModal();
+            services.AddBlazoredToast();
         }   
 
 

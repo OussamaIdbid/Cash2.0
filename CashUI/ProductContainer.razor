@@ -1,5 +1,7 @@
 ﻿@inject IProductService ProductService
+@inject ITableService TableService
 @inject IModalService ModalService
+@inject IToastService ToastService
 
 
     <div class="">
@@ -30,6 +32,9 @@
         public int Id { get; set; }
 
         public Product SelectedProduct { get; set; }
+        IEnumerable<Table> tables;
+        bool TableIsTaken = false;
+
         public List<Product> orderItems = new List<Product>();
 
         [Parameter] public EventCallback<List<Product>> OnListChanged { get; set; }
@@ -49,22 +54,34 @@
         {
 
             products = await ProductService.GetProductsByCategory(Id);
-
+            tables = await TableService.GetTables();
 
         }
 
         public string showName(Product product)
         {
-            //Console.WriteLine(product.Name + " " + product.Price);
 
-            orderItems.Add(product);
-            //for(int i = 0; i < orderItems.Count; i++)
-            //{
-            //    Console.WriteLine(orderItems[i].Name);
-            //}
 
-            OnListChanged.InvokeAsync(orderItems);
 
+            if(Table.isTaken == true)
+            {
+                //Console.WriteLine(product.Name + " " + product.Price);
+
+                orderItems.Add(product);
+                //for(int i = 0; i < orderItems.Count; i++)
+                //{
+                //    Console.WriteLine(orderItems[i].Name);
+                //}
+
+                OnListChanged.InvokeAsync(orderItems);
+
+
+
+            }
+            else
+            {
+                ToastService.ShowToast(ToastLevel.Info, "Select a table before adding products to order");
+            }
 
             return product.Name;
         }

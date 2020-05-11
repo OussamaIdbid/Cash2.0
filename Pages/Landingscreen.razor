@@ -1,6 +1,7 @@
 ﻿@using CashModel
 @using CashUI
 @inject NavigationManager NavigationManager
+@inject IToastService ToastService
 @inject IUserService UserService
 @page "/"
 
@@ -13,7 +14,7 @@
                     <form class="form-signin">
                         <div class="form-label-group">
                             <input @bind="@username" id="inputEmail" autocomplete="off" class="form-control" placeholder="Username" required autofocus>
-                            <label for="inputEmail">Email address</label>
+                            <label for="inputEmail">Username</label>
                         </div>
 
                         <div class="form-label-group">
@@ -48,20 +49,40 @@
 
     void Auth()
     {
+        bool isWrong = false;
 
-        foreach (var item in users)
+        if(!users.Any())
+        {
+            ToastService.ShowToast(ToastLevel.Error, "Currently no users registered");
 
-            if (item.Username == username && decryptString(item.Password) == password)
+        }
+        else
+        {
+            foreach (var item in users)
             {
-                Task.Delay(3000).Wait();
-                NavigationManager.NavigateTo("/cash");
-                User.IsloggedIn = true;
-            }
-            else
-            {
-                Console.WriteLine("wrong password");
+
+                if (item.Username == username && decryptString(item.Password) == password)
+                {
+                    ToastService.ShowToast(ToastLevel.Success, "Successfully logged in");
+                    NavigationManager.NavigateTo("/cash");
+                    User.IsloggedIn = true;
+                    isWrong = false;
+                }
+                else
+                {
+                    Console.WriteLine("wrong password");
+                    isWrong = true;
+                }
+
+
+
             }
 
+            if (isWrong)
+            {
+                ToastService.ShowToast(ToastLevel.Error, "Wrong Username or Password");
+            }
+        }
 
 
 

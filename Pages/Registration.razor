@@ -3,6 +3,7 @@
 @inject NavigationManager NavigationManager
 @inject IUserService UserService
 @inject IModalService Modal
+@inject IToastService ToastService
 
 @page "/registration"
 
@@ -32,12 +33,10 @@
         </div>
     </div>
 </div>
-<button @onclick="@(() => Modal.Show<Landingscreen>("Modal Popup Example"))" class="btn btn-primary">View </button>
 
 
 
 @code{
-    bool PopupVisible { get; set; } = false;
     User users = new User();
     IEnumerable<User> UserList = new List<User>();
 
@@ -71,47 +70,78 @@
 
     protected async Task CreateUser()
     {
-
-        foreach (var item in UserList)
+        if(!UserList.Any())
         {
-            item.Password = decryptString(item.Password);
 
-            if (item.Password == users.Password || item.Username == users.Username)
+            if (users.Username == users.Password)
             {
+                ToastService.ShowToast(ToastLevel.Info, "username and password are the same");
 
-
-
-                break;
 
             }
             else
             {
-                if (users.Username == users.Password)
+                password = EncryptString(users.Password);
+                users.Password = password;
+
+                Console.WriteLine(users.Password);
+
+                await UserService.CreateUser(users);
+
+                users = new User();
+
+                ToastService.ShowToast(ToastLevel.Success, "Successfully registered");
+
+                NavigationManager.NavigateTo("/");
+            }
+
+        }
+        else
+        {
+            foreach (var item in UserList)
+            {
+                item.Password = decryptString(item.Password);
+
+                if (item.Password == users.Password || item.Username == users.Username)
                 {
-                    Console.WriteLine("username and password are the same");
-                    break;
+
+
+                    ToastService.ShowToast(ToastLevel.Info, "password or username already exists");
+
+
+                }
+                else if (users.Username == users.Password)
+                {
+                    ToastService.ShowToast(ToastLevel.Info, "username and password are the same");
+
+
                 }
                 else
-                {
-                    password = EncryptString(users.Password);
-                    users.Password = password;
+                {                   
+                    
+                        password = EncryptString(users.Password);
+                        users.Password = password;
 
-                    Console.WriteLine(users.Password);
+                        Console.WriteLine(users.Password);
 
-                    await UserService.CreateUser(users);
+                        await UserService.CreateUser(users);
 
-                    users = new User();
+                        users = new User();
 
-                    NavigationManager.NavigateTo("/");
+                        ToastService.ShowToast(ToastLevel.Success, "Successfully registered");
 
+                        NavigationManager.NavigateTo("/");
+
+
+                    }
 
                 }
 
             }
-
         }
 
-    }
+
+    
 
     protected override async Task OnInitializedAsync()
     {
