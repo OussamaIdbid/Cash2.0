@@ -69,7 +69,7 @@ namespace CashModel
                     conn.Open();
                 try
                 {
-                    await conn.ExecuteAsync(query, new { product.Name, product.Price, id }, commandType: CommandType.Text);
+                    await conn.ExecuteAsync(query, new { product.Name, product.Price,product.CategoryId, id }, commandType: CommandType.Text);
                 }
                 catch (Exception ex)
                 {

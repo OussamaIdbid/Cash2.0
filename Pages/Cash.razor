@@ -2,6 +2,7 @@
 @using CashModel
 @inject NavigationManager NavigationManager
 @inject IModalService ModalService
+@inject IToastService ToastService
 @page "/cash"
 
 @if (User.IsloggedIn == false)
@@ -10,6 +11,14 @@
 }
 else
 {
+<div class="d-inline-flex flex-column">
+    <button @onclick="(() => LogOut())" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Log Out</button>
+    <button @onclick="(() => Config())" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Configuration</button>
+</div>
+
+
+
+
     <div id='main-container' class='container d-inline-flex flex-row shadow-lg'>
 
         <div id='left' class='container col-8 justify-content-start'>
@@ -33,7 +42,7 @@ else
                     <button type="button" id="cancel-button" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Cancel</button>
                     <button type="button" id="pin-button" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Pin</button>
                     <button type="button" @onclick="@(() => ModalService.Show<CashUI.TableSelect>("Table Selection"))" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Tables </button>
-                    
+
                 </div>
             </div>
         </div>
@@ -60,6 +69,20 @@ else
         {
             totalPrice += CurrentList1[i].Price;
         }
+
+    }
+
+    public void LogOut()
+    {
+        User.IsloggedIn = false;
+        NavigationManager.NavigateTo("/");
+        ToastService.ShowToast(ToastLevel.Success, "Logged out");
+    }
+
+    public void Config()
+    {
+
+        NavigationManager.NavigateTo("/configuration");
 
     }
 

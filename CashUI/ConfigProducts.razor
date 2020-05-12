@@ -1,0 +1,79 @@
+﻿@inject IProductService ProductService
+@inject IToastService ToastService
+
+<div class="">
+    <div class="product-container">
+
+
+        @if (products == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            @foreach (var product in products)
+            {
+
+                <p class="product-test shadow" @onclick="(() => SwapProducts(product))">
+                    @product.Name
+                </p>
+
+            }
+        }
+    </div>
+
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    public Product SelectedProduct { get; set; }
+    Product product1;
+    Product product2;
+    private int amountClicked = 0;
+
+    //public event Action OnChange;
+
+    IEnumerable<Product> products;
+    [Parameter] public EventCallback<List<Product>> OnListChanged { get; set; }
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+        products = await ProductService.GetProductsByCategory(Id);
+
+    }
+
+    protected async Task SwapProducts(Product product)
+    {
+
+
+        if (amountClicked == 0)
+        {
+            product1 = product;
+            amountClicked++;
+            Console.WriteLine(product1.Name + " Selected");
+
+
+        }
+        else if (amountClicked == 1)
+        {
+            product2 = product;
+
+            await ProductService.EditProduct(product1.Id, product2);
+            await ProductService.EditProduct(product2.Id, product1);
+            amountClicked = 0;
+
+            ToastService.ShowToast(ToastLevel.Info, product1.Name + " is being swapped with " + product2.Name);
+            Console.WriteLine(product1.Name + " is being swapped with " + product2.Name);
+
+
+        }
+
+        StateHasChanged();
+
+
+    }
+}

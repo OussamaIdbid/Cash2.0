@@ -1,0 +1,32 @@
+﻿@using CashModel
+@inject ICategoryService CategoryService
+@inject IProductService ProductService
+
+
+<DxComboBox Data="@categories" TextFieldName="CategoryName" @bind-SelectedItem="@CurrentCategory">
+</DxComboBox>
+
+
+@code {
+
+    public Category currentCategory { get; set; }
+    Category CurrentCategory
+    {
+        get => currentCategory;
+        set
+        {
+            currentCategory = value;
+            Console.Write(value.CategoryId);
+            OnIdChanged.InvokeAsync(value.CategoryId);
+        }
+    }
+
+    public IEnumerable<Category> categories;
+    [Parameter] public EventCallback<int> OnIdChanged { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        categories = await CategoryService.GetCategories();
+    }
+}
+
