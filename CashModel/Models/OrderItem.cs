@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CashModel
 {
-    class OrderItem
+    public class OrderItem
     {
         public int Id { get; set; }
         public double TotalPrice { get; set; }

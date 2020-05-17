@@ -3,6 +3,7 @@
 @inject NavigationManager NavigationManager
 @inject IToastService ToastService
 @inject IUserService UserService
+@inject IOperationService OperationService
 @page "/"
 
     <div id="Landingscreen-container" class="container d-flex flex-column">
@@ -40,13 +41,14 @@
     </div>
 @code{
 
-
     string username;
     string password;
     bool changeType = true;
     string Toggle => changeType ? "password": null;
+    Operation operation = new Operation();
 
     IEnumerable<User> users = new List<User>();
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -59,42 +61,61 @@
     {
         changeType = !changeType;
     }
-    void Auth()
+    protected async Task Auth()
     {
-        bool isWrong = false;
+        bool isWrong = true;
 
-        if(!users.Any())
+        if(username == null || password == null)
         {
-            ToastService.ShowToast(ToastLevel.Error, "Currently no users registered");
+            ToastService.ShowToast(ToastLevel.Info, "please fill in the required fields");
 
         }
         else
         {
-            foreach (var item in users)
+            if (!users.Any())
             {
+                ToastService.ShowToast(ToastLevel.Error, "Currently no users registered");
 
-                if (item.Username == username && decryptString(item.Password) == password)
+            }
+            else
+            {
+                foreach (var item in users)
                 {
-                    ToastService.ShowToast(ToastLevel.Success, "Successfully logged in");
-                    NavigationManager.NavigateTo("/cash");
-                    User.IsloggedIn = true;
-                    isWrong = false;
+
+                    if (item.Username == username && decryptString(item.Password) == password)
+                    {
+                        Console.WriteLine("Right password");
+                        Console.WriteLine(item.Id);
+
+                        User.CurrentId = item.Id;
+                        User.CurrentUsername = item.Username;
+
+                        isWrong = false;
+
+                    }
+
+                }
+
+                if (isWrong)
+                {
+                    ToastService.ShowToast(ToastLevel.Error, "Wrong Username or Password");
                 }
                 else
                 {
-                    Console.WriteLine("wrong password");
-                    isWrong = true;
+
+
+                    ToastService.ShowToast(ToastLevel.Success, "Successfully logged in");
+                    NavigationManager.NavigateTo("/cash");
+
+                    User.IsloggedIn = true;
+
+                    operation.Description = User.CurrentUsername + " has logged in";
+                    operation.UserId = User.CurrentId;
+                    await OperationService.CreateOperation(operation);
                 }
-
-
-
-            }
-
-            if (isWrong)
-            {
-                ToastService.ShowToast(ToastLevel.Error, "Wrong Username or Password");
             }
         }
+
 
 
 

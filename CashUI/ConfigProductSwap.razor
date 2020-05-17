@@ -1,0 +1,37 @@
+﻿@using CashModel
+@using CashUI
+@inject IProductService ProductService
+@page "/productswap"
+<div id="product-container" class='container bg-white m-3 shadow-sm'>
+    <ConfigProductCategories OnIdChanged="IdChanged"></ConfigProductCategories>
+    <CashUI.ConfigProducts OnListChanged="ListChanged" Id="SelectedId"></CashUI.ConfigProducts>
+</div>
+
+
+@code {
+    @code {
+        public int SelectedId = 1;
+        public List<Product> CurrentList = new List<Product>();
+        public IEnumerable<Product> Products;
+        [Parameter] public EventCallback<List<Product>> OnList1Changed { get; set; }
+
+
+        public async void IdChanged(int id)
+        {
+            SelectedId = id;
+        }
+
+        public async void ListChanged(List<Product> List)
+        {
+            CurrentList = List;
+            await OnList1Changed.InvokeAsync(CurrentList);
+        }
+
+
+
+
+
+
+    }
+
+}

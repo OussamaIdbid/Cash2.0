@@ -1,5 +1,6 @@
 ﻿@inject IModalService ModalService
 @inject ITableService TableService
+@inject IOperationService OperationService
 @inject IProductService ProductService
 
 
@@ -31,6 +32,7 @@ else
 @code {
     IEnumerable<Table> tables;
     IEnumerable<Product> products;
+    Operation operation = new Operation();
 
     public int amountOfTakenTables { get; set; }
 
@@ -38,6 +40,7 @@ else
     {
         tables = await TableService.GetTables();
         products = await ProductService.GetProducts();
+        operation.UserId = User.CurrentId;
 
         foreach (var item in tables)
         {
@@ -67,15 +70,20 @@ else
 
         if (table.status == Table.Status.Taken)
         {
+            operation.Description = User.CurrentUsername + "has registered table" + table.Id + "as open";
             table.status = Table.Status.Open;
             await TableService.EditTable(table.Id, table);
+            await OperationService.CreateOperation(operation);
             Table.isTaken = false;
         }
         else
         {
             if (amountOfTakenTables == 0)
             {
+                operation.Description = User.CurrentUsername + "has registered table" + table.Id + "as closed";
+
                 table.status = Table.Status.Taken;
+                await OperationService.CreateOperation(operation);
                 await TableService.EditTable(table.Id, table);
                 Table.isTaken = true;
 

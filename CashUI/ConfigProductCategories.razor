@@ -3,30 +3,40 @@
 @inject IProductService ProductService
 
 
-<DxComboBox Data="@categories" TextFieldName="CategoryName" @bind-SelectedItem="@CurrentCategory">
-</DxComboBox>
+        <DxComboBox Data="@categories" TextFieldName="CategoryName" @bind-SelectedItem="@CurrentCategory">
+        </DxComboBox>
 
 
-@code {
+   
 
-    public Category currentCategory { get; set; }
-    Category CurrentCategory
-    {
-        get => currentCategory;
-        set
+
+    @code {
+
+        public Category currentCategory { get; set; }
+        Category CurrentCategory
         {
-            currentCategory = value;
-            Console.Write(value.CategoryId);
-            OnIdChanged.InvokeAsync(value.CategoryId);
+            get => currentCategory;
+            set
+            {
+                currentCategory = value;
+                Console.Write(value.CategoryId);
+                OnIdChanged.InvokeAsync(value.CategoryId);
+            }
+        }
+
+        /*public int GetCategoryId(Category category)
+        {
+            Console.Write(category.CategoryId);
+            OnIdChanged.InvokeAsync(category.CategoryId);
+            return category.CategoryId;
+        }*/
+
+        public IEnumerable<Category> categories;
+        [Parameter] public EventCallback<int> OnIdChanged { get; set; }
+
+        protected override async Task OnParametersSetAsync()
+        {
+            categories = await CategoryService.GetCategories();
         }
     }
-
-    public IEnumerable<Category> categories;
-    [Parameter] public EventCallback<int> OnIdChanged { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        categories = await CategoryService.GetCategories();
-    }
-}
 

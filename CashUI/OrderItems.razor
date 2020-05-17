@@ -1,4 +1,6 @@
-﻿@if (orderItems == null)
+﻿@inject IOperationService OperationService
+
+@if (orderItems == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -9,17 +11,21 @@ else
             <tr>
                 <th>Product</th>
                 <th>Prijs</th>
+                <th>Quantity</th>
+                <th>Totaal</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item1 in orderItems)
             {
 
-                <tr>
-                    <td>@item1.Name</td>
-                    <td>€@item1.Price</td>
-                    <button @onclick="(() => Remove(item1))">remove</button>
-                </tr>
+            <tr>
+                <td>@item1.Product.Name</td>
+                <td>€@item1.Product.Price</td>
+                <td>@item1.Quantity</td>
+                <td>€@item1.TotalPrice</td>
+                <td @onclick="(() => Remove(item1))">remove</td>
+            </tr>
             }
         </tbody>
     </table>
@@ -27,19 +33,31 @@ else
 @code {
 
     [Parameter]
-    public List<Product> orderItems { get; set; }
+    public List<OrderItem> orderItems { get; set; }
+    Operation operation = new Operation();
 
-    public List<Product> FilteredorderItems { get; set; }
+    [Parameter] public EventCallback<double> OnPriceChanged { get; set; }
 
-    public void Remove(Product product)
+    //public List<Product> FilteredorderItems { get; set; }
+
+    protected async Task Remove(OrderItem orderItem)
     {
+        double PriceReduction = orderItem.TotalPrice;
+
+        orderItems.Remove(orderItem);
 
 
-        orderItems.Remove(product);
-        Console.WriteLine(orderItems.Count);
+        operation.Description = User.CurrentUsername + " has removed " + orderItem.Product.Name + " from order";
+
+        OnPriceChanged.InvokeAsync(PriceReduction);
+
+        await OperationService.CreateOperation(operation);
+
+
     }
     protected override async Task OnParametersSetAsync()
     {
+        operation.UserId = User.CurrentId;
 
         //orderItems.GroupBy(n => n).Any(c => c.Count() > 1);
         //for (int i = 0; i < orderItems.Count; i++)

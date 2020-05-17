@@ -2,92 +2,102 @@
 @inject ITableService TableService
 @inject IModalService ModalService
 @inject IToastService ToastService
+@inject IOperationService OperationService
 
 
-    <div class="">
-        <div class="product-container">
+
+<div class="">
+    <div class="product-container">
 
 
-            @if (products == null)
+        @if (products == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            @foreach (var product in products)
             {
-                <p><em>Loading...</em></p>
+
+                <p class="product-test shadow " @onclick="(() => showName(product))">
+                    @product.Name
+                </p>
+
             }
-            else
-            {
-                @foreach (var product in products)
-                {
-
-                    <p   class="product-test shadow " @onclick="(() => showName(product))">
-                        @product.Name
-                    </p>
-
-                }
-            }
-        </div>
-
+        }
     </div>
 
-    @code {
-        [Parameter]
-        public int Id { get; set; }
+</div>
 
-        public Product SelectedProduct { get; set; }
-        IEnumerable<Table> tables;
-        bool TableIsTaken = false;
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    Operation operation = new Operation();
 
-        public List<Product> orderItems = new List<Product>();
+    public Product SelectedProduct { get; set; }
+    IEnumerable<Table> tables;
+    bool TableIsTaken = false;
 
-        [Parameter] public EventCallback<List<Product>> OnListChanged { get; set; }
+    public List<OrderItem> orderItems = new List<OrderItem>();
 
-
-        //[Parameter]
-        //public IEnumerable<Product> products { get; set; }
-
+    [Parameter] public EventCallback<List<OrderItem>> OnListChanged { get; set; }
 
 
-        //public event Action OnChange;
-
-        IEnumerable<Product> products;
-
-
-        protected override async Task OnParametersSetAsync()
-        {
-
-            products = await ProductService.GetProductsByCategory(Id);
-            tables = await TableService.GetTables();
-
-        }
-
-        public string showName(Product product)
-        {
+    //[Parameter]
+    //public IEnumerable<Product> products { get; set; }
 
 
 
-            if(Table.isTaken == true)
-            {
-                //Console.WriteLine(product.Name + " " + product.Price);
+    //public event Action OnChange;
 
-                orderItems.Add(product);
-                //for(int i = 0; i < orderItems.Count; i++)
-                //{
-                //    Console.WriteLine(orderItems[i].Name);
-                //}
-
-                OnListChanged.InvokeAsync(orderItems);
+    IEnumerable<Product> products;
 
 
+    protected override async Task OnParametersSetAsync()
+    {
 
-            }
-            else
-            {
-                ToastService.ShowToast(ToastLevel.Info, "Select a table before adding products to order");
-            }
-
-            return product.Name;
-        }
-
+        products = await ProductService.GetProductsByCategory(Id);
+        tables = await TableService.GetTables();
 
     }
+
+    public string showName(Product product)
+    {
+
+
+
+        if (Table.isTaken == true)
+        {
+            operation.UserId = User.CurrentId;
+            operation.Description = User.CurrentUsername + " has added " + product.Name + " to order";
+
+            OrderItem orderItem = new OrderItem();
+            //orderItem.Id = 0;
+            orderItem.Quantity = 2;
+            orderItem.TotalPrice = 5.70;
+            orderItem.Product = product;
+
+            orderItems.Add(orderItem);
+
+            OnListChanged.InvokeAsync(orderItems);
+            SendOperation();
+
+
+        }
+        else
+        {
+            ToastService.ShowToast(ToastLevel.Info, "Select a table before adding products to order");
+        }
+
+        return product.Name;
+    }
+
+
+    protected async Task SendOperation()
+    {
+        await OperationService.CreateOperation(operation);
+    }
+}
 
 
 

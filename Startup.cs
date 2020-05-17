@@ -12,9 +12,11 @@ using Microsoft.Extensions.Hosting;
 using CashModel;
 using CashUI;
 using WebAppCash.Data;
-using EmbeddedBlazorContent;
 using Blazored.Modal;
 using Blazored.Toast;
+using Blazorise;
+using Blazorise.Bootstrap;
+using Blazorise.Icons.FontAwesome;
 
 namespace WebAppCash
 {
@@ -35,11 +37,21 @@ namespace WebAppCash
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
 
+            services
+              .AddBlazorise(options =>
+              {
+                  options.ChangeTextOnKeyPress = true; // optional
+                })
+              .AddBootstrapProviders()
+              .AddFontAwesomeIcons();
+
+
 
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITableService, TableService>();
+            services.AddScoped<IOperationService, OperationService>();
 
 
             var sqlConnectionConfiguration = new SqlConnectionConfiguration(Configuration.GetConnectionString("SqlDbContext"));
@@ -68,6 +80,10 @@ namespace WebAppCash
 
 
             app.UseRouting();
+
+            app.ApplicationServices
+                .UseBootstrapProviders()
+                 .UseFontAwesomeIcons();
 
             app.UseEndpoints(endpoints =>
             {

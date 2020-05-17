@@ -1,6 +1,8 @@
 ﻿@using CashModel
 @inject ICategoryService CategoryService
 @inject IProductService ProductService
+@inject IOperationService OperationService
+
 
 
 <DxComboBox Data="@categories" TextFieldName="CategoryName" @bind-SelectedItem="@CurrentCategory">

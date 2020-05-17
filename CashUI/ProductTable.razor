@@ -1,0 +1,49 @@
+﻿@inject IProductService ProductService
+@if (products == null)
+{
+    <p>No products</p>
+}
+else
+{
+    <div class="container">
+        <table class="table bg-white m-3 shadow-sm ">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">CategoryId</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in products)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.Name</td>
+                        <td>@item.Price</td>
+                        <td>@item.CategoryId</td>
+                    </tr>
+                }
+
+            </tbody>
+
+
+        </table>
+
+
+    </div>
+
+
+}
+
+@code {
+    IEnumerable<Product> products = new List<Product>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        products = await ProductService.GetProducts();
+    }
+}
+

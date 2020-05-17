@@ -1,0 +1,45 @@
+﻿@inject IUserService UserService
+
+@if (users == null)
+{
+    <p>No users</p>
+}
+else
+{
+<div id="user-table" class="container">
+    <table class="table bg-white m-3 shadow-sm ">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Username</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in users)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Username</td>
+                </tr>
+            }
+
+        </tbody>
+
+
+    </table>
+
+
+</div>
+
+
+    }
+
+    @code {
+        IEnumerable<User> users = new List<User>();
+
+protected override async Task OnParametersSetAsync()
+    {
+        users = await UserService.GetUsers();
+    }
+    }

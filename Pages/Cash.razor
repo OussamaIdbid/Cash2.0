@@ -2,6 +2,7 @@
 @using CashModel
 @inject NavigationManager NavigationManager
 @inject IModalService ModalService
+@inject IOperationService OperationService
 @inject IToastService ToastService
 @page "/cash"
 
@@ -12,12 +13,10 @@
 else
 {
 <div class="d-inline-flex flex-column">
+    <p>Welcome @Username</p>
     <button @onclick="(() => LogOut())" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Log Out</button>
     <button @onclick="(() => Config())" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Configuration</button>
 </div>
-
-
-
 
     <div id='main-container' class='container d-inline-flex flex-row shadow-lg'>
 
@@ -30,13 +29,13 @@ else
 
         <div id='right' class='container col-4 bg-white'>
             <Checkout>
-                <OrderItems orderItems="@CurrentList1"></OrderItems>
+                <OrderItems OnPriceChanged="PriceReduced" orderItems="@CurrentList1"></OrderItems>
             </Checkout>
             <div id='checkout-container'>
                 <div id="price-container" class='text-muted'>
                     <p id='discount'>Discount</p>
                     <p id='subtotal'>Subtotal</p>
-                    <p id='total'>Total €@totalPrice</p>
+                    <p id='total'>Total €@RoundedTotalPrice</p>
                 </div>
                 <div id="checkout-buttons-container">
                     <button type="button" id="cancel-button" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Cancel</button>
@@ -54,74 +53,59 @@ else
 
 
 @code{
-    public List<Product> CurrentList1 = new List<Product>();
+
+    string Username = User.CurrentUsername;
+    //public List<Product> CurrentList1 = new List<Product>();
+    public List<OrderItem> CurrentList1 = new List<OrderItem>();
+
     public double totalPrice;
+    public double RoundedTotalPrice;
+    Operation operation = new Operation();
 
-    [Parameter] public EventCallback<List<Product>> OnList2Changed { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        operation.UserId = User.CurrentId;
+    }
 
-    public async void List1Changed(List<Product> List)
+    //[Parameter] public EventCallback<List<Product>> OnList2Changed { get; set; }
+    [Parameter] public EventCallback<List<OrderItem>> OnList2Changed { get; set; }
+
+    public async void List1Changed(List<OrderItem> List)
     {
         CurrentList1 = List;
         await OnList2Changed.InvokeAsync(CurrentList1);
+        Product.TotalPrice = 0;
         totalPrice = 0;
         for (int i = 0; i < CurrentList1.Count; i++)
         {
-            totalPrice += CurrentList1[i].Price;
+            totalPrice += CurrentList1[i].TotalPrice;
+            RoundedTotalPrice = Math.Round(totalPrice, 2);
         }
 
     }
 
-    public void LogOut()
+    public async void PriceReduced(double PriceReduction)
     {
+        totalPrice -= PriceReduction;
+        RoundedTotalPrice = Math.Round(totalPrice, 2);
+    }
+    protected async Task LogOut()
+    {
+        operation.Description = User.CurrentUsername + " has logged out";
+
         User.IsloggedIn = false;
         NavigationManager.NavigateTo("/");
         ToastService.ShowToast(ToastLevel.Success, "Logged out");
+        await OperationService.CreateOperation(operation);
     }
 
-    public void Config()
+    protected async Task Config()
     {
-
+        operation.Description = User.CurrentUsername + " clicked on the configuration page";
+        await OperationService.CreateOperation(operation);
         NavigationManager.NavigateTo("/configuration");
 
     }
-
-
-    //public int SelectedId { get; set; } = 1;
-    //ProductCategories category;
-    //public ProductContainer container;
-
-    //public void changeItem(int newItem)
-    //{
-    //    SelectedId = newItem;
-    //    container.setId(newItem);
-
-    //}
-    //private void refreshComponent()
-    //{
-
-    //    //if(category.CurrentCategory == null)
-    //    //{
-    //    //    Console.WriteLine("ifjaifja");
-
-    //    //}
-    //    //else
-    //    //{
-    //    //    SelectedId = category.CurrentCategory.CategoryId;
-    //    //    container.OnChange += StateHasChanged;
-    //    //    Console.WriteLine("selected");
-
-
-    //    //}
-
-    //    container.setId(category.CurrentCategory.CategoryId);
-
-
-
-
-    //}
-
-
-
 
 }

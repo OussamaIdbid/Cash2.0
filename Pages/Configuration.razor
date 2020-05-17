@@ -5,9 +5,9 @@
 
 @if (User.IsloggedIn)
 {
-    <div id="product-container" class='container'>
-        <ConfigProductCategories OnIdChanged="IdChanged"></ConfigProductCategories>
-        <CashUI.ConfigProducts OnListChanged="ListChanged" Id="SelectedId"></CashUI.ConfigProducts>
+    <div class="d-flex flex-row">
+        <ConfigNav></ConfigNav>
+        <ConfigContent></ConfigContent>
     </div>
 }
 else
@@ -17,22 +17,6 @@ else
 
 
 @code {
-    public int SelectedId = 1;
-    public List<Product> CurrentList = new List<Product>();
-    public IEnumerable<Product> Products;
-    [Parameter] public EventCallback<List<Product>> OnList1Changed { get; set; }
-
-
-    public async void IdChanged(int id)
-    {
-        SelectedId = id;
-    }
-
-    public async void ListChanged(List<Product> List)
-    {
-        CurrentList = List;
-        await OnList1Changed.InvokeAsync(CurrentList);
-    }
 
 
 

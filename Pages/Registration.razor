@@ -39,6 +39,7 @@
 
 @code{
     User users = new User();
+
     IEnumerable<User> UserList = new List<User>();
 
     string password;
@@ -71,78 +72,88 @@
 
     protected async Task CreateUser()
     {
-        if(!UserList.Any())
+        bool IsDuplicate = false;
+
+        if (users.Username == null || users.Password == null)
         {
-
-            if (users.Username == users.Password)
-            {
-                ToastService.ShowToast(ToastLevel.Info, "username and password are the same");
-
-
-            }
-            else
-            {
-                password = EncryptString(users.Password);
-                users.Password = password;
-
-                Console.WriteLine(users.Password);
-
-                await UserService.CreateUser(users);
-
-                users = new User();
-
-                ToastService.ShowToast(ToastLevel.Success, "Successfully registered");
-
-                NavigationManager.NavigateTo("/");
-            }
+            ToastService.ShowToast(ToastLevel.Info, "Please fill in every required field");
 
         }
         else
         {
-            foreach (var item in UserList)
+            if (!UserList.Any())
             {
-                item.Password = decryptString(item.Password);
+                Console.WriteLine("saame");
 
-                if (item.Password == users.Password || item.Username == users.Username)
-                {
-
-
-                    ToastService.ShowToast(ToastLevel.Info, "password or username already exists");
-
-
-                }
-                else if (users.Username == users.Password)
+                if (users.Username == users.Password)
                 {
                     ToastService.ShowToast(ToastLevel.Info, "username and password are the same");
 
 
                 }
                 else
-                {                   
-                    
-                        password = EncryptString(users.Password);
-                        users.Password = password;
+                {
+                    password = EncryptString(users.Password);
+                    users.Password = password;
 
-                        Console.WriteLine(users.Password);
+                    Console.WriteLine(users.Password);
 
-                        await UserService.CreateUser(users);
+                    await UserService.CreateUser(users);
 
-                        users = new User();
+                    users = new User();
 
-                        ToastService.ShowToast(ToastLevel.Success, "Successfully registered");
+                    ToastService.ShowToast(ToastLevel.Success, "Successfully registered");
 
-                        NavigationManager.NavigateTo("/");
+                    NavigationManager.NavigateTo("/");
+                }
 
+            }
+            else
+            {
+                foreach (var item in UserList)
+                {
+
+                    if (item.Username == users.Username)
+                    {
+
+
+                        ToastService.ShowToast(ToastLevel.Info, "password or username already exists");
+
+                        IsDuplicate = true;
 
                     }
+                }
+                if (IsDuplicate == false)
+                {
+                    password = EncryptString(users.Password);
+                    users.Password = password;
+
+                    Console.WriteLine(users.Password);
+
+                    await UserService.CreateUser(users);
+
+                    users = new User();
+
+                    ToastService.ShowToast(ToastLevel.Success, "Successfully registered");
+                    Console.WriteLine("registered");
+
+                    NavigationManager.NavigateTo("/");
 
                 }
+
+
 
             }
         }
 
 
-    
+
+    }
+
+
+
+
+
 
     protected override async Task OnInitializedAsync()
     {
