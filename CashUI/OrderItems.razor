@@ -33,7 +33,7 @@
                     <tr>
                         <td>@item1.Product.Name</td>
                         <td>€@item1.Product.Price</td>
-                        <td>@item1.Quantity</td>
+                        <td class="d-flex flex-row"><span  @onclick="(() => ReduceQuantity(item1))" style="cursor:pointer; visibility:@this.visibility;" class="material-icons">remove_circle_outline</span><p class="m-1">@item1.Quantity</p><span @onclick="(() => IncreaseQuantity(item1))" style="cursor:pointer" class="material-icons">add_circle_outline</span></td>
                         <td>€@item1.TotalPrice</td>
                         <td style="cursor:pointer" @onclick="(() => Remove(item1))"><span class="material-icons">delete</span></td>
                     </tr>
@@ -43,34 +43,73 @@
         }
         @code {
 
-    [Parameter]
-        public List<OrderItem> orderItems { get; set; }
-        Operation operation = new Operation();
-
-        [Parameter] public EventCallback<double> OnPriceChanged { get; set; }
-        [Parameter] public EventCallback<List<OrderItem>> OnProductRemoved { get; set; }
+            [Parameter]
+            public List<OrderItem> orderItems { get; set; }
+            Operation operation = new Operation();
+            string visibility = "visible";
 
 
-        protected async Task Remove(OrderItem orderItem)
-        {
-            double PriceReduction = orderItem.TotalPrice;
-
-            orderItems.Remove(orderItem);
+            [Parameter] public EventCallback<double> OnPriceReduced { get; set; }
+            [Parameter] public EventCallback<double> OnPriceIncreased { get; set; }
+            [Parameter] public EventCallback<List<OrderItem>> OnProductRemoved { get; set; }
 
 
-            operation.Description = User.CurrentUsername + " has removed " + orderItem.Product.Name + " from order";
+            protected async Task Remove(OrderItem orderItem)
+            {
+                double PriceReduction = orderItem.TotalPrice;
 
-            OnPriceChanged.InvokeAsync(PriceReduction);
-            OnProductRemoved.InvokeAsync(orderItems);
-
-            await OperationService.CreateOperation(operation);
+                orderItems.Remove(orderItem);
 
 
-        }
-        protected override async Task OnParametersSetAsync()
-        {
-            operation.UserId = User.CurrentId;
+                operation.Description = User.CurrentUsername + " has removed " + orderItem.Product.Name + " from order";
 
-        }
+                OnPriceReduced.InvokeAsync(PriceReduction);
+                OnProductRemoved.InvokeAsync(orderItems);
+
+                await OperationService.CreateOperation(operation);
+
+
+            }
+            protected async Task ReduceQuantity(OrderItem orderItem)
+            {
+
+                orderItem.Quantity--;
+                orderItem.TotalPrice -= orderItem.Product.Price;
+                OnPriceReduced.InvokeAsync(orderItem.Product.Price);
+                OnProductRemoved.InvokeAsync(orderItems);
+
+                if (orderItem.Quantity == 1)
+                {
+                    visibility = "hidden";
+                }
+
+
+
+            }
+            protected async Task IncreaseQuantity(OrderItem orderItem)
+            {
+                if(orderItem.Quantity == 1)
+                {
+                    visibility = "visible";
+                    orderItem.Quantity++;
+                    orderItem.TotalPrice += orderItem.Product.Price;
+                    OnPriceIncreased.InvokeAsync(orderItem.Product.Price);
+                    OnProductRemoved.InvokeAsync(orderItems);
+                }
+                else
+                {
+                    orderItem.Quantity++;
+                    orderItem.TotalPrice += orderItem.Product.Price;
+                    OnPriceIncreased.InvokeAsync(orderItem.Product.Price);
+                    OnProductRemoved.InvokeAsync(orderItems);
+                }
+
+            }
+            protected override async Task OnParametersSetAsync()
+            {
+                operation.UserId = User.CurrentId;
+
+
+            }
 
         }

@@ -29,7 +29,7 @@ else
 
         <div id='right' class='container col-4 bg-white'>
             <Checkout>
-                <OrderItems OnProductRemoved="ProductRemoved" OnPriceChanged="PriceReduced" orderItems="@CurrentList1"></OrderItems>
+                <OrderItems OnProductRemoved="ProductRemoved" OnPriceReduced="PriceReduced" OnPriceIncreased="PriceIncreased" orderItems="@CurrentList1"></OrderItems>
             </Checkout>
             <div id='checkout-container'>
                 <div id="price-container" class='text-muted'>
@@ -65,6 +65,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         operation.UserId = User.CurrentId;
+        CurrentList1 = new List<OrderItem>();
     }
 
     [Parameter] public EventCallback<List<OrderItem>> OnList2Changed { get; set; }
@@ -88,7 +89,11 @@ else
         totalPrice -= PriceReduction;
         RoundedTotalPrice = Math.Round(totalPrice, 2);
     }
-
+    public async void PriceIncreased(double PriceIncrease)
+    {
+        totalPrice += PriceIncrease;
+        RoundedTotalPrice = Math.Round(totalPrice, 2);
+    }
     public async void ProductRemoved(List<OrderItem> orderItems)
     {
 
@@ -119,9 +124,9 @@ else
             else
             {
 
-                CurrentList1 = new List<OrderItem>();
+                CurrentList1 = (List<OrderItem>)result.Data;
                 RoundedTotalPrice = 0;
-
+                //Console.WriteLine(CurrentList1.Count);
 
             }
         }

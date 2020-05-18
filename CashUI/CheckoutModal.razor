@@ -87,9 +87,9 @@
             await OrderitemService.CreateOrderitem(item);
         }
 
-        orderItems = new List<OrderItem>();
+        orderItems.Clear();
         BlazoredModal.Close(ModalResult.Ok(orderItems));
-        
+        Console.WriteLine(orderItems.Count);
 
     }
 }
