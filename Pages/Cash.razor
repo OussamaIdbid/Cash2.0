@@ -53,14 +53,13 @@ else
 
 
 @code{
-
+    Operation operation = new Operation();
     string Username = User.CurrentUsername;
-    //public List<Product> CurrentList1 = new List<Product>();
     public List<OrderItem> CurrentList1 = new List<OrderItem>();
 
     public double totalPrice;
     public double RoundedTotalPrice;
-    Operation operation = new Operation();
+
 
 
     protected override async Task OnInitializedAsync()
@@ -68,7 +67,6 @@ else
         operation.UserId = User.CurrentId;
     }
 
-    //[Parameter] public EventCallback<List<Product>> OnList2Changed { get; set; }
     [Parameter] public EventCallback<List<OrderItem>> OnList2Changed { get; set; }
 
     public async void List1Changed(List<OrderItem> List)

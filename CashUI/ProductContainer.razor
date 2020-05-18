@@ -61,26 +61,47 @@
 
     }
 
-    public string showName(Product product)
+    public async Task showName(Product product)
     {
-
+        foreach (var item in tables)
+        {
+            if(item.status == Table.Status.Taken)
+            {
+                Table.isTaken = true;
+            }
+        }
 
 
         if (Table.isTaken == true)
         {
-            operation.UserId = User.CurrentId;
-            operation.Description = User.CurrentUsername + " has added " + product.Name + " to order";
 
-            OrderItem orderItem = new OrderItem();
-            //orderItem.Id = 0;
-            orderItem.Quantity = 2;
-            orderItem.TotalPrice = 5.70;
-            orderItem.Product = product;
 
-            orderItems.Add(orderItem);
+            var parameters = new ModalParameters();
+            parameters.Add(nameof(ProductModal.ProductId), product.Id);
+            var productModal = ModalService.Show<ProductModal>("Submit product", parameters);
+            var result = await productModal.Result;
 
-            OnListChanged.InvokeAsync(orderItems);
-            SendOperation();
+            if (result.Cancelled)
+            {
+                ToastService.ShowToast(ToastLevel.Info, "Action Cancelled");
+            }
+            else
+            {
+                operation.UserId = User.CurrentId;
+                operation.Description = User.CurrentUsername + " has added " + product.Name + " to order";
+
+                OrderItem SubmittedItem = (OrderItem)result.Data;
+                //Console.WriteLine(SubmittedItem.Product.Name); 
+                orderItems.Add(SubmittedItem);
+                OnListChanged.InvokeAsync(orderItems);
+                SendOperation();
+            }
+
+
+
+
+            //parameters.Add(nameof(ProductModal.OnOrderItemSubmit), OrderSubmit);
+
 
 
         }
@@ -89,10 +110,14 @@
             ToastService.ShowToast(ToastLevel.Info, "Select a table before adding products to order");
         }
 
-        return product.Name;
+
     }
 
-
+    public void OrderSubmit(OrderItem orderItem)
+    {
+        orderItems.Add(orderItem);
+        OnListChanged.InvokeAsync(orderItems);
+    }
     protected async Task SendOperation()
     {
         await OperationService.CreateOperation(operation);

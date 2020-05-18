@@ -330,3 +330,6 @@ body {
     display: flex;
     flex-wrap: wrap;
 }
+#amount-field{
+    width:10%;
+}
