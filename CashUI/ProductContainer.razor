@@ -43,13 +43,6 @@
     [Parameter] public EventCallback<List<OrderItem>> OnListChanged { get; set; }
 
 
-    //[Parameter]
-    //public IEnumerable<Product> products { get; set; }
-
-
-
-    //public event Action OnChange;
-
     IEnumerable<Product> products;
 
 
@@ -68,6 +61,7 @@
             if(item.status == Table.Status.Taken)
             {
                 Table.isTaken = true;
+                Table.CurrentTable = item.Id;
             }
         }
 
@@ -91,19 +85,11 @@
                 operation.Description = User.CurrentUsername + " has added " + product.Name + " to order";
 
                 OrderItem SubmittedItem = (OrderItem)result.Data;
-                //Console.WriteLine(SubmittedItem.Product.Name); 
+                SubmittedItem.TotalPrice = Math.Round(SubmittedItem.TotalPrice, 2);
                 orderItems.Add(SubmittedItem);
                 OnListChanged.InvokeAsync(orderItems);
                 SendOperation();
             }
-
-
-
-
-            //parameters.Add(nameof(ProductModal.OnOrderItemSubmit), OrderSubmit);
-
-
-
         }
         else
         {

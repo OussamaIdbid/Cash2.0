@@ -52,6 +52,8 @@ namespace WebAppCash
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITableService, TableService>();
             services.AddScoped<IOperationService, OperationService>();
+            services.AddScoped<IOrderitemService, OrderitemService>();
+            services.AddScoped<IOrderService,OrderService>();
 
 
             var sqlConnectionConfiguration = new SqlConnectionConfiguration(Configuration.GetConnectionString("SqlDbContext"));

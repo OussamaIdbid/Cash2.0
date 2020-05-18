@@ -7,6 +7,8 @@ namespace CashModel
     public class Order
     {
         public int Id { get; set; }
+        public int TableId { get; set; }
+        public double TotalPrice { get; set; }
         public List<OrderItem> orderitems { get; set; }
      
     }

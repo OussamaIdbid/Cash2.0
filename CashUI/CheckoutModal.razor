@@ -1,0 +1,95 @@
+﻿@inject IModalService ModalService
+@inject IOrderService OrderService
+@inject IOrderitemService OrderitemService
+<div style="height:400px !important; overflow:auto;">
+<table class="table" >
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Prijs</th>
+            <th>Q</th>
+            <th>Totaal</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item1 in orderItems)
+        {
+
+            <tr>
+                <td>@item1.Product.Name</td>
+                <td>€@item1.Product.Price</td>
+                <td>@item1.Quantity</td>
+                <td>€@item1.TotalPrice</td>
+            </tr>
+        }
+    </tbody>
+</table>
+</div>
+<p>Totaal: €@TotalPrice</p>
+
+<button class="btn  btn-primary shadow-sm checkout-button m-1" @onclick="(() => Checkout())">Submit</button>
+
+@code {
+
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
+    [Parameter] public List<OrderItem> orderItems { get; set; }
+
+    public int LatestOrderId { get; set; }
+    public double TotalPrice { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        IEnumerable<Order> orders;
+
+        foreach (var item in orderItems)
+        {
+            TotalPrice += Math.Round(item.TotalPrice,2);
+        }
+
+        orders = await OrderService.GetOrders();
+
+        if(!orders.Any())
+        {
+            LatestOrderId = 1;
+        }
+        else
+        {
+            foreach (var item in orders)
+            {
+                LatestOrderId++;
+            }
+
+            LatestOrderId++;
+        }
+
+
+    }
+
+    public async Task Checkout()
+    {
+        Order order = new Order();
+        order.TableId = Table.CurrentTable;
+        foreach (var item in orderItems)
+        {
+            order.TotalPrice += item.TotalPrice;
+            Console.WriteLine(order.TotalPrice);
+
+        }
+        await OrderService.CreateOrder(order);
+
+
+        foreach (var item in orderItems)
+        {
+            item.OrderId = LatestOrderId;
+            item.ProductId = item.Product.Id;
+
+            await OrderitemService.CreateOrderitem(item);
+        }
+
+        orderItems = new List<OrderItem>();
+        BlazoredModal.Close(ModalResult.Ok(orderItems));
+        
+
+    }
+}

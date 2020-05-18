@@ -2,10 +2,6 @@
 
 @if (orderItems == null)
 {
-    <p><em>Loading...</em></p>
-}
-else
-{
     <table class="table">
         <thead>
             <tr>
@@ -16,55 +12,65 @@ else
                 <th style="color:white">Actions</th>
             </tr>
         </thead>
-        <tbody>
-            @foreach (var item1 in orderItems)
-            {
-
-            <tr>
-                <td>@item1.Product.Name</td>
-                <td>€@item1.Product.Price</td>
-                <td>@item1.Quantity</td>
-                <td>€@item1.TotalPrice</td>
-                <td style="cursor:pointer" @onclick="(() => Remove(item1))"><span class="material-icons">delete</span></td>
-            </tr>
-            }
-        </tbody>
     </table>
-}
-@code {
+        }
+        else
+        {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Prijs</th>
+                    <th>Q</th>
+                    <th>Totaal</th>
+                    <th style="color:white">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item1 in orderItems)
+                {
+
+                    <tr>
+                        <td>@item1.Product.Name</td>
+                        <td>€@item1.Product.Price</td>
+                        <td>@item1.Quantity</td>
+                        <td>€@item1.TotalPrice</td>
+                        <td style="cursor:pointer" @onclick="(() => Remove(item1))"><span class="material-icons">delete</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        }
+        @code {
 
     [Parameter]
-    public List<OrderItem> orderItems { get; set; }
-    Operation operation = new Operation();
+        public List<OrderItem> orderItems { get; set; }
+        Operation operation = new Operation();
 
-    [Parameter] public EventCallback<double> OnPriceChanged { get; set; }
-
-    //public List<Product> FilteredorderItems { get; set; }
-
-    protected async Task Remove(OrderItem orderItem)
-    {
-        double PriceReduction = orderItem.TotalPrice;
-
-        orderItems.Remove(orderItem);
+        [Parameter] public EventCallback<double> OnPriceChanged { get; set; }
+        [Parameter] public EventCallback<List<OrderItem>> OnProductRemoved { get; set; }
 
 
-        operation.Description = User.CurrentUsername + " has removed " + orderItem.Product.Name + " from order";
+        protected async Task Remove(OrderItem orderItem)
+        {
+            double PriceReduction = orderItem.TotalPrice;
 
-        OnPriceChanged.InvokeAsync(PriceReduction);
-
-        await OperationService.CreateOperation(operation);
+            orderItems.Remove(orderItem);
 
 
-    }
-    protected override async Task OnParametersSetAsync()
-    {
-        operation.UserId = User.CurrentId;
+            operation.Description = User.CurrentUsername + " has removed " + orderItem.Product.Name + " from order";
 
-        //orderItems.GroupBy(n => n).Any(c => c.Count() > 1);
-        //for (int i = 0; i < orderItems.Count; i++)
-        //{
-        //    Console.WriteLine(orderItems[i].Price);
-        //}
-    }
+            OnPriceChanged.InvokeAsync(PriceReduction);
+            OnProductRemoved.InvokeAsync(orderItems);
 
-}
+            await OperationService.CreateOperation(operation);
+
+
+        }
+        protected override async Task OnParametersSetAsync()
+        {
+            operation.UserId = User.CurrentId;
+
+        }
+
+        }

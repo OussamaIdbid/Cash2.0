@@ -50,7 +50,6 @@
             if(item.status == Table.Status.Taken)
             {
                 Table.isTaken = true;
-                //comment
             }
         }
 
@@ -64,7 +63,6 @@
         {
             if (item.status == Table.Status.Taken)
             {
-                //Console.WriteLine(item.status);
                 amountOfTakenTables++;
                 Console.WriteLine(amountOfTakenTables);
             }
@@ -78,6 +76,7 @@
             await TableService.EditTable(table.Id, table);
             await OperationService.CreateOperation(operation);
             Table.isTaken = false;
+            Table.CurrentTable = 0;
         }
         else
         {
@@ -89,6 +88,7 @@
                 await OperationService.CreateOperation(operation);
                 await TableService.EditTable(table.Id, table);
                 Table.isTaken = true;
+                Table.CurrentTable = table.Id;
 
             }
             else

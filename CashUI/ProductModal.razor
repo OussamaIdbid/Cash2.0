@@ -22,7 +22,6 @@
 
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
     [Parameter] public int ProductId { get; set; }
-    //[Parameter] public EventCallback<OrderItem> OnOrderItemSubmit { get; set; }
 
     public int Amount { get; set; }
     Product product = new Product();
@@ -50,6 +49,6 @@
             BlazoredModal.Close(ModalResult.Ok(orderItem));
 
         }
-        //OnOrderItemSubmit.InvokeAsync(orderItem);
+
     }
 }

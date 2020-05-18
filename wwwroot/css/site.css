@@ -333,3 +333,7 @@ body {
 #amount-field{
     width:10%;
 }
+.checkout-modal{
+    max-height:500px;
+}
+.

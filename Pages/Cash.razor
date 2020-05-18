@@ -29,7 +29,7 @@ else
 
         <div id='right' class='container col-4 bg-white'>
             <Checkout>
-                <OrderItems OnPriceChanged="PriceReduced" orderItems="@CurrentList1"></OrderItems>
+                <OrderItems OnProductRemoved="ProductRemoved" OnPriceChanged="PriceReduced" orderItems="@CurrentList1"></OrderItems>
             </Checkout>
             <div id='checkout-container'>
                 <div id="price-container" class='text-muted'>
@@ -38,8 +38,7 @@ else
                     <p id='total'>Total €@RoundedTotalPrice</p>
                 </div>
                 <div id="checkout-buttons-container">
-                    <button type="button" id="cancel-button" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Cancel</button>
-                    <button type="button" id="pin-button" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Pin</button>
+                    <button type="button"  @onclick="(() => Checkout())" id="pin-button" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Checkout</button>
                     <button type="button" @onclick="@(() => ModalService.Show<CashUI.TableSelect>("Table Selection"))" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Tables </button>
 
                 </div>
@@ -56,6 +55,7 @@ else
     Operation operation = new Operation();
     string Username = User.CurrentUsername;
     public List<OrderItem> CurrentList1 = new List<OrderItem>();
+    public List<OrderItem> NewOrderlist = new List<OrderItem>();
 
     public double totalPrice;
     public double RoundedTotalPrice;
@@ -88,6 +88,46 @@ else
         totalPrice -= PriceReduction;
         RoundedTotalPrice = Math.Round(totalPrice, 2);
     }
+
+    public async void ProductRemoved(List<OrderItem> orderItems)
+    {
+
+        CurrentList1 = orderItems;
+    }
+
+    public async Task Checkout()
+    {
+        if(CurrentList1.Count == 0)
+        {
+            ToastService.ShowToast(ToastLevel.Info, "Order is empty");
+
+        }
+        else
+        {
+
+            var parameters = new ModalParameters();
+            parameters.Add(nameof(CheckoutModal.orderItems), CurrentList1);
+            var checkoutModal = ModalService.Show<CheckoutModal>("Checkout", parameters);
+
+            var result = await checkoutModal.Result;
+
+
+            if (result.Cancelled)
+            {
+                ToastService.ShowToast(ToastLevel.Info, "Checkout Cancelled");
+            }
+            else
+            {
+
+                CurrentList1 = new List<OrderItem>();
+                RoundedTotalPrice = 0;
+
+
+            }
+        }
+
+    }
+
     protected async Task LogOut()
     {
         operation.Description = User.CurrentUsername + " has logged out";
