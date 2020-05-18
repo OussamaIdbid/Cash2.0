@@ -33,7 +33,7 @@
                     <tr>
                         <td>@item1.Product.Name</td>
                         <td>€@item1.Product.Price</td>
-                        <td class="d-flex flex-row"><span  @onclick="(() => ReduceQuantity(item1))" style="cursor:pointer; visibility:@this.visibility;" class="material-icons">remove_circle_outline</span><p class="m-1">@item1.Quantity</p><span @onclick="(() => IncreaseQuantity(item1))" style="cursor:pointer" class="material-icons">add_circle_outline</span></td>
+                        <td class="d-flex flex-row"><span  @onclick="(() => ReduceQuantity(item1))" style="cursor:pointer; visibility:@item1.MinusBtnVisibility;" class="material-icons">remove_circle_outline</span><p class="m-1">@item1.Quantity</p><span @onclick="(() => IncreaseQuantity(item1))" style="cursor:pointer" class="material-icons">add_circle_outline</span></td>
                         <td>€@item1.TotalPrice</td>
                         <td style="cursor:pointer" @onclick="(() => Remove(item1))"><span class="material-icons">delete</span></td>
                     </tr>
@@ -80,7 +80,7 @@
 
                 if (orderItem.Quantity == 1)
                 {
-                    visibility = "hidden";
+                    orderItem.MinusBtnVisibility = "hidden";
                 }
 
 
@@ -90,7 +90,7 @@
             {
                 if(orderItem.Quantity == 1)
                 {
-                    visibility = "visible";
+                    orderItem.MinusBtnVisibility = "visible";
                     orderItem.Quantity++;
                     orderItem.TotalPrice += orderItem.Product.Price;
                     OnPriceIncreased.InvokeAsync(orderItem.Product.Price);
@@ -108,6 +108,17 @@
             protected override async Task OnParametersSetAsync()
             {
                 operation.UserId = User.CurrentId;
+                foreach(var item in orderItems)
+                {
+                    if(item.Quantity == 1)
+                    {
+                        item.MinusBtnVisibility = "hidden";
+                    }
+                    else
+                    {
+                        item.MinusBtnVisibility = "visible";
+                    }
+                }
 
 
             }
