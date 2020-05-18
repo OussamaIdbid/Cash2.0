@@ -11,7 +11,7 @@ else
             <tr>
                 <th>Product</th>
                 <th>Prijs</th>
-                <th>Quantity</th>
+                <th>Q</th>
                 <th>Totaal</th>
                 <th style="color:white">Actions</th>
             </tr>
@@ -25,7 +25,7 @@ else
                 <td>€@item1.Product.Price</td>
                 <td>@item1.Quantity</td>
                 <td>€@item1.TotalPrice</td>
-                <td @onclick="(() => Remove(item1))">remove</td>
+                <td style="cursor:pointer" @onclick="(() => Remove(item1))"><span class="material-icons">delete</span></td>
             </tr>
             }
         </tbody>
