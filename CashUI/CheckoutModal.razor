@@ -1,6 +1,7 @@
 ﻿@inject IModalService ModalService
 @inject IOrderService OrderService
 @inject IOrderitemService OrderitemService
+@inject IToastService ToastService
 <div style="height:400px !important; overflow:auto;">
 <table class="table" >
     <thead>
@@ -89,7 +90,7 @@
 
         orderItems.Clear();
         BlazoredModal.Close(ModalResult.Ok(orderItems));
-        Console.WriteLine(orderItems.Count);
+        ToastService.ShowToast(ToastLevel.Success, "Order complete");
 
     }
 }
