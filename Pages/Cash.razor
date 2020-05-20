@@ -39,7 +39,7 @@ else
                 </div>
                 <div id="checkout-buttons-container">
                     <button type="button"  @onclick="(() => Checkout())" id="pin-button" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Checkout</button>
-                    <button type="button" @onclick="@(() => ModalService.Show<CashUI.TableSelect>("Table Selection"))" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Tables </button>
+                    <button type="button" @onclick="@(() => TableSelect())" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Tables </button>
 
                 </div>
             </div>
@@ -100,6 +100,28 @@ else
         CurrentList1 = orderItems;
     }
 
+
+    public async Task TableSelect()
+    {
+
+        bool OrderIsEmpty = (!CurrentList1.Any()) ? true : false;
+        Console.WriteLine("is order empty?" + OrderIsEmpty);
+
+        var options = new ModalOptions()
+        {
+            HideCloseButton = true,
+            DisableBackgroundCancel = true
+        };
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(CashUI.TableSelect.orderIsEmpty), OrderIsEmpty);
+        var TableModal = ModalService.Show<TableSelect>("Submit product", parameters,options);
+        var result = await TableModal.Result;
+
+        if((bool)result.Data == false)
+        {
+            CurrentList1.Clear();
+        }
+    }
     public async Task Checkout()
     {
         if(CurrentList1.Count == 0)
@@ -109,6 +131,7 @@ else
         }
         else
         {
+
 
             var parameters = new ModalParameters();
             parameters.Add(nameof(CheckoutModal.orderItems), CurrentList1);
