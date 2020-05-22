@@ -1,7 +1,9 @@
-#product-field{
-    
-    background-color: navy;
 
+* {
+    font-family: 'Open Sans', sans-serif;
+}
+#product-field {
+    background-color: navy;
 }
 #order-field{
     

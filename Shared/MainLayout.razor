@@ -1,13 +1,25 @@
 ﻿@inherits LayoutComponentBase
-<!--<div class="sidebar">
-    <NavMenu />
-</div>-->
+@using CashUI
+@using CashModel
 
-<div class="main">
+
+@if (User.IsloggedIn)
+         {
+    <TopBar></TopBar>
+}
+<div class="main d-flex">
+    @if (User.IsloggedIn)
+    {
+        <div class="sidebar">
+            <NavMenu />
+        </div>
+    }
+
     <div class="content px-4">
         @Body
     </div>
 </div>
+
 <BlazoredModal />
-<BlazoredToasts Position="Blazored.Toast.Configuration.ToastPosition.BottomCenter" 
-                Timeout="2"/>
+<BlazoredToasts Position="Blazored.Toast.Configuration.ToastPosition.BottomCenter"
+                Timeout="2" />

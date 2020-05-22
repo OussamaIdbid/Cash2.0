@@ -1,47 +1,58 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">WebAppCash</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-</div>
-
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+﻿@using CashModel
+@inject NavigationManager NavigationManager
+@inject IOperationService OperationService
+@inject IToastService ToastService
+<div>
     <ul class="nav flex-column">
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
+            <div class="nav-link" @onclick="(() => ToHome())">
+                <span class="material-icons">
+                    home
+                </span>
+            </div>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
+            <div class="nav-link" @onclick="(() => ToConfig())">
+                <span class="material-icons">
+                    settings
+                </span>
+            </div>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
+            <div class="nav-link" @onclick="(() => Logout())">
+                <span class="material-icons">
+                    exit_to_app
+                </span>
+            </div>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="cash">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Cash Prototype
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="addproduct">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Voeg producten toe
-            </NavLink>
-                </li>
+
     </ul>
 </div>
 
 @code {
-    bool collapseNavMenu = true;
-
-    string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    void ToggleNavMenu()
+    public void ToHome()
     {
-        collapseNavMenu = !collapseNavMenu;
+        NavigationManager.NavigateTo("/cash");
+    }
+    public async Task ToConfig()
+    {
+        Operation operation = new Operation();
+        operation.UserId = User.CurrentId;
+        operation.Description = User.CurrentUsername + " clicked on the configuration page";
+        await OperationService.CreateOperation(operation);
+
+        NavigationManager.NavigateTo("/configuration");
+    }
+    public async Task Logout()
+    {
+        Operation operation = new Operation();
+        operation.Description = User.CurrentUsername + " has logged out";
+        operation.UserId = User.CurrentId;
+
+        User.IsloggedIn = false;
+        NavigationManager.NavigateTo("/");
+        ToastService.ShowToast(ToastLevel.Success, "Logged out");
+        await OperationService.CreateOperation(operation);
     }
 }
+

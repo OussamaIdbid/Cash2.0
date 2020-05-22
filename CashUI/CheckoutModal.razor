@@ -1,6 +1,7 @@
 ﻿@inject IModalService ModalService
 @inject IOrderService OrderService
 @inject IOrderitemService OrderitemService
+@inject ITableService TableService
 @inject IToastService ToastService
 @inject IOperationService OperationService
 <div style="height:400px !important; overflow:auto;">
@@ -35,6 +36,7 @@
 
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
     [Parameter] public List<OrderItem> orderItems { get; set; }
+    Operation operation = new Operation();
 
     public int LatestOrderId { get; set; }
     public double TotalPrice { get; set; }
@@ -87,6 +89,20 @@
             await OrderitemService.CreateOrderitem(item);
         }
 
+        IEnumerable<Table> tables = await TableService.GetTables();
+        foreach (var item in tables)
+        {
+            if(item.status == Table.Status.Taken)
+            {
+                item.status = Table.Status.Open;
+                await TableService.EditTable(item.Id, item);
+            }
+        }
+        Table.isTaken = false;
+
+        operation.UserId = User.CurrentId;
+        operation.Description = User.CurrentUsername + " has checked out order #" + LatestOrderId;
+        await OperationService.CreateOperation(operation);
         orderItems.Clear();
         BlazoredModal.Close(ModalResult.Ok(orderItems));
         ToastService.ShowToast(ToastLevel.Success, "Order complete");

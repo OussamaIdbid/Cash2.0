@@ -19,7 +19,7 @@
             @foreach (var product in products)
             {
 
-                <p class="product-test shadow " @onclick="(() => showName(product))">
+                <p class="product-test rounded shadow-sm " @onclick="(() => showName(product))">
                     @product.Name
                 </p>
 
@@ -35,27 +35,25 @@
     Operation operation = new Operation();
 
     public Product SelectedProduct { get; set; }
-    IEnumerable<Table> tables;
+
     bool TableIsTaken = false;
 
     public List<OrderItem> orderItems = new List<OrderItem>();
 
     [Parameter] public EventCallback<List<OrderItem>> OnListChanged { get; set; }
 
-
     IEnumerable<Product> products;
-
 
     protected override async Task OnParametersSetAsync()
     {
 
         products = await ProductService.GetProductsByCategory(Id);
-        tables = await TableService.GetTables();
 
     }
 
     public async Task showName(Product product)
     {
+        IEnumerable<Table> tables = await TableService.GetTables();
         foreach (var item in tables)
         {
             if(item.status == Table.Status.Taken)

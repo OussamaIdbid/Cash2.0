@@ -119,7 +119,7 @@
         {
             if (amountOfTakenTables == 0)
             {
-                operation.Description = User.CurrentUsername + "has registered table" + table.Id + "as closed";
+                operation.Description = User.CurrentUsername + "has registered table" + table.Id + "as taken";
 
                 table.status = Table.Status.Taken;
                 await OperationService.CreateOperation(operation);

@@ -95,6 +95,7 @@
                 {
                     password = EncryptString(users.Password);
                     users.Password = password;
+                    users.Username = (users.Username).ToLower();
 
                     Console.WriteLine(users.Password);
 
@@ -113,7 +114,7 @@
                 foreach (var item in UserList)
                 {
 
-                    if (item.Username == users.Username)
+                    if ((item.Username).ToLower() == (users.Username).ToLower())
                     {
 
 
@@ -127,6 +128,7 @@
                 {
                     password = EncryptString(users.Password);
                     users.Password = password;
+                    users.Username = (users.Username).ToLower();
 
                     Console.WriteLine(users.Password);
 

@@ -82,7 +82,7 @@
                 foreach (var item in users)
                 {
 
-                    if (item.Username == username && decryptString(item.Password) == password)
+                    if ((item.Username).ToLower() == (username).ToLower() && decryptString(item.Password) == password)
                     {
                         Console.WriteLine("Right password");
                         Console.WriteLine(item.Id);

@@ -1,32 +1,33 @@
 ﻿@using CashModel
 @inject IProductService ProductService
+    <div id="category-container">
+        <ProductCategories OnIdChanged="IdChanged"></ProductCategories>
+    </div>
+    <div id="product-container" class=''>
+        <ProductContainer OnListChanged="ListChanged" Id="SelectedId"></ProductContainer>
+    </div>
 
-<div id="product-container" class=''>
-    <ProductCategories OnIdChanged="IdChanged"></ProductCategories>
-    <ProductContainer OnListChanged="ListChanged" Id="SelectedId"></ProductContainer>
-</div>
-
-@code {
-    public int SelectedId = 0;
-    public List<OrderItem> CurrentList = new List<OrderItem>();
-    public IEnumerable<Product> Products;
-    [Parameter] public EventCallback<List<OrderItem>> OnList1Changed { get; set; }
+    @code {
+        public int SelectedId = 0;
+        public List<OrderItem> CurrentList = new List<OrderItem>();
+        public IEnumerable<Product> Products;
+        [Parameter] public EventCallback<List<OrderItem>> OnList1Changed { get; set; }
 
 
-    public async void IdChanged(int id)
-    {
-        SelectedId = id;
+        public async void IdChanged(int id)
+        {
+            SelectedId = id;
+        }
+
+        public async void ListChanged(List<OrderItem> List)
+        {
+            CurrentList = List;
+            await OnList1Changed.InvokeAsync(CurrentList);
+        }
+
+
+
+
+
+
     }
-
-    public async void ListChanged(List<OrderItem> List)
-    {
-        CurrentList = List;
-        await OnList1Changed.InvokeAsync(CurrentList);
-    }
-
-
-
-
-
-
-}

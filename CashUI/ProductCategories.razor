@@ -5,13 +5,34 @@
 
 
 
-<DxComboBox Data="@categories" TextFieldName="CategoryName" @bind-SelectedItem="@CurrentCategory">
-</DxComboBox>
+<div class="">
+    <div class="product-container">
+
+
+        @if (categories == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            @foreach (var item in categories)
+            {
+
+                <p class="product-test rounded shadow-sm"  @onclick="(() => GetCategoryId(item))">
+                    @item.CategoryName
+                </p>
+
+            }
+        }
+    </div>
+
+</div>
+
 
 
 @code {
 
-    public Category currentCategory { get; set; }
+    /*public Category currentCategory { get; set; }
     Category CurrentCategory
     {
         get => currentCategory;
@@ -21,8 +42,13 @@
             Console.Write(value.CategoryId);
             OnIdChanged.InvokeAsync(value.CategoryId);
         }
+    }*/
+    public int GetCategoryId(Category category)
+    {
+        Console.Write(category.CategoryId);
+        OnIdChanged.InvokeAsync(category.CategoryId);
+        return category.CategoryId;
     }
-
     public IEnumerable<Category> categories;
     [Parameter] public EventCallback<int> OnIdChanged { get; set; }
 

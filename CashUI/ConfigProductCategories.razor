@@ -3,40 +3,61 @@
 @inject IProductService ProductService
 
 
-        <DxComboBox Data="@categories" TextFieldName="CategoryName" @bind-SelectedItem="@CurrentCategory">
-        </DxComboBox>
+<div class="">
+    <div class="product-container">
 
 
-   
-
-
-    @code {
-
-        public Category currentCategory { get; set; }
-        Category CurrentCategory
+        @if (categories == null)
         {
-            get => currentCategory;
-            set
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            @foreach (var item in categories)
             {
-                currentCategory = value;
-                Console.Write(value.CategoryId);
-                OnIdChanged.InvokeAsync(value.CategoryId);
+
+                <p class="product-test shadow" @onclick="(() => GetCategoryId(item))">
+                    @item.CategoryName
+                </p>
+
             }
         }
+    </div>
 
-        /*public int GetCategoryId(Category category)
+</div>
+
+
+
+
+
+
+@code {
+
+    /*public Category currentCategory { get; set; }
+    Category CurrentCategory
+    {
+        get => currentCategory;
+        set
         {
-            Console.Write(category.CategoryId);
-            OnIdChanged.InvokeAsync(category.CategoryId);
-            return category.CategoryId;
-        }*/
-
-        public IEnumerable<Category> categories;
-        [Parameter] public EventCallback<int> OnIdChanged { get; set; }
-
-        protected override async Task OnParametersSetAsync()
-        {
-            categories = await CategoryService.GetCategories();
+            currentCategory = value;
+            Console.Write(value.CategoryId);
+            OnIdChanged.InvokeAsync(value.CategoryId);
         }
+    }*/
+
+    public int GetCategoryId(Category category)
+    {
+        Console.Write(category.CategoryId);
+        OnIdChanged.InvokeAsync(category.CategoryId);
+        return category.CategoryId;
     }
+
+    public IEnumerable<Category> categories;
+    [Parameter] public EventCallback<int> OnIdChanged { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        categories = await CategoryService.GetCategories();
+    }
+}
 

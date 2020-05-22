@@ -12,29 +12,20 @@
 }
 else
 {
-<div class="d-inline-flex flex-column">
-    <p>Welcome @Username</p>
-    <button @onclick="(() => LogOut())" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Log Out</button>
-    <button @onclick="(() => Config())" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Configuration</button>
-</div>
+    <div id='main-container' class='container d-flex flex-row'>
 
-    <div id='main-container' class='container d-inline-flex flex-row shadow-lg'>
-
-        <div id='left' class='container col-8 justify-content-start'>
-            <div id='top-bar' class='d-flex flex-row shadow-lg '>
-                <i class="material-icons" id='menu-icon'>menu</i>
-            </div>
+        <div id='left' class='container rounded col-7 justify-content-start'>
             <LeftContainer OnList1Changed="List1Changed"></LeftContainer>
         </div>
 
-        <div id='right' class='container col-4 bg-white'>
+        <div id='right' class='container rounded col-5 bg-white'>
             <Checkout>
                 <OrderItems OnProductRemoved="ProductRemoved" OnPriceReduced="PriceReduced" OnPriceIncreased="PriceIncreased" orderItems="@CurrentList1"></OrderItems>
             </Checkout>
-            <div id='checkout-container'>
+            <div id='checkout-container' class="rounded">
                 <div id="price-container" class='text-muted'>
-                    <p id='discount'>Discount</p>
-                    <p id='subtotal'>Subtotal</p>
+                    <p id='subtotal'>Subtotal €@RoundedTotalPrice</p>
+                    <p id='discount'>Discount €0</p>
                     <p id='total'>Total €@RoundedTotalPrice</p>
                 </div>
                 <div id="checkout-buttons-container">
@@ -152,24 +143,6 @@ else
 
             }
         }
-
-    }
-
-    protected async Task LogOut()
-    {
-        operation.Description = User.CurrentUsername + " has logged out";
-
-        User.IsloggedIn = false;
-        NavigationManager.NavigateTo("/");
-        ToastService.ShowToast(ToastLevel.Success, "Logged out");
-        await OperationService.CreateOperation(operation);
-    }
-
-    protected async Task Config()
-    {
-        operation.Description = User.CurrentUsername + " clicked on the configuration page";
-        await OperationService.CreateOperation(operation);
-        NavigationManager.NavigateTo("/configuration");
 
     }
 
