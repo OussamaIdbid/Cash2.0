@@ -114,7 +114,7 @@ else
         };
         var parameters = new ModalParameters();
         parameters.Add(nameof(CashUI.TableSelect.orderIsEmpty), OrderIsEmpty);
-        var TableModal = ModalService.Show<TableSelect>("Submit product", parameters,options);
+        var TableModal = ModalService.Show<TableSelect>("Add product", parameters,options);
         var result = await TableModal.Result;
 
         if((bool)result.Data == false)
@@ -132,7 +132,6 @@ else
         else
         {
 
-
             var parameters = new ModalParameters();
             parameters.Add(nameof(CheckoutModal.orderItems), CurrentList1);
             var checkoutModal = ModalService.Show<CheckoutModal>("Checkout", parameters);
@@ -149,7 +148,7 @@ else
 
                 CurrentList1 = (List<OrderItem>)result.Data;
                 RoundedTotalPrice = 0;
-                //Console.WriteLine(CurrentList1.Count);
+                
 
             }
         }

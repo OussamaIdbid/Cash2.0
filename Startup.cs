@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using CashModel;
 using CashUI;
-using WebAppCash.Data;
 using Blazored.Modal;
 using Blazored.Toast;
 using Blazorise;
@@ -35,7 +34,6 @@ namespace WebAppCash
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
 
             services
               .AddBlazorise(options =>

@@ -89,6 +89,7 @@ namespace CashModel
             using (var conn = new SqlConnection(_configuration.Value))
             {
                 const string query = @"select * from cash.dbo.Product";
+                
 
                 if (conn.State == ConnectionState.Closed)
                     conn.Open();
@@ -109,6 +110,37 @@ namespace CashModel
 
             }
             return products;
+        }
+
+        public async Task<IEnumerable<Product>> GetPagedProducts(Pager pager)
+        {
+            IEnumerable<Product> products;
+            using (var conn = new SqlConnection(_configuration.Value))
+            {
+
+               var query = @"SELECT * FROM cash.dbo.Product order by Id OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
+
+
+                if (conn.State == ConnectionState.Closed)
+                    conn.Open();
+                try
+                {
+                    products = await conn.QueryAsync<Product>(query,pager);
+
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+                }
+
+            }
+            return products;
+
         }
         public async Task<IEnumerable<Product>> GetProductsByCategory(int categoryId)
         {

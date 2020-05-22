@@ -1,11 +1,17 @@
 ﻿@inject IProductService ProductService
+@inject IModalService ModalService
+@inject IToastService ToastService
+@inject IOperationService OperationService
 @if (products == null)
 {
     <p>No products</p>
 }
 else
 {
-    <div class="container">
+
+    <div height="300px" class="container">
+        <button class="btn btn-sm btn-primary shadow-sm checkout-button m-1" @onclick="(() => Add())">Add product</button>
+
         <table class="table bg-white m-3 shadow-sm ">
             <thead>
                 <tr>
@@ -24,6 +30,8 @@ else
                         <td>@item.Name</td>
                         <td>@item.Price</td>
                         <td>@item.CategoryId</td>
+                        <td><button class="btn btn-sm btn-primary shadow-sm checkout-button m-1" @onclick="(() => Edit(item))"> Edit</button></td>
+                        <td><button class="btn btn-sm btn-primary shadow-sm checkout-button m-1" @onclick="(() => Delete(item))">Delete</button></td>
                     </tr>
                 }
 
@@ -31,7 +39,10 @@ else
 
 
         </table>
-
+        <div class="d-flex">
+            <button class="btn btn-sm btn-primary shadow-sm checkout-button m-1 align-self-start" style="visibility:@PreviousBtnVisibility;" @onclick="(() => PreviousPage())">Previous page</button>
+            <button class="btn btn-sm btn-primary shadow-sm checkout-button m-1 align-self-end" style="visibility:@NextBtnVisibility;" @onclick="(() => NextPage())">Next page</button>
+        </div>
 
     </div>
 
@@ -40,10 +51,155 @@ else
 
 @code {
     IEnumerable<Product> products = new List<Product>();
+    int page = 1;
+    string NextBtnVisibility;
+    string PreviousBtnVisibility;
 
     protected override async Task OnParametersSetAsync()
     {
-        products = await ProductService.GetProducts();
+        Pager pager = new Pager(page);
+
+        products = await ProductService.GetPagedProducts(pager);
+        foreach (var item in products)
+        {
+            Console.WriteLine(item.Id);
+        }
+
+        Pager pagerNext = new Pager((page + 1));
+
+        IEnumerable<Product> NextPageProducts = await ProductService.GetPagedProducts(pagerNext);
+
+        if (products.Count() <= 10 && !NextPageProducts.Any())
+        {
+            NextBtnVisibility = "hidden";
+            PreviousBtnVisibility = "hidden";
+        }
+        else if (NextPageProducts.Any())
+        {
+            NextBtnVisibility = "visible";
+            PreviousBtnVisibility = "hidden";
+        }
+        else
+        {
+            NextBtnVisibility = "visible";
+            PreviousBtnVisibility = "hidden";
+        }
+
+    }
+
+    public async Task NextPage()
+    {
+        page++;
+        Pager pager = new Pager(page);
+        products = await ProductService.GetPagedProducts(pager);
+        /*foreach (var item in products)
+        {
+            Console.WriteLine(item.Id);
+        }*/
+        Pager pagerNext = new Pager((page + 1));
+        IEnumerable<Product> NextPageProducts = await ProductService.GetPagedProducts(pagerNext);
+
+        if (page > 1)
+        {
+            PreviousBtnVisibility = "visible";
+        }
+        if (!NextPageProducts.Any())
+        {
+            NextBtnVisibility = "hidden";
+        }
+
+
+
+    }
+    public async Task PreviousPage()
+    {
+        page--;
+        Pager pager = new Pager(page);
+        products = await ProductService.GetPagedProducts(pager);
+        /*foreach (var item in products)
+        {
+            Console.WriteLine(item.Id);
+        }*/
+        if (page == 1)
+        {
+            PreviousBtnVisibility = "hidden";
+        }
+
+        NextBtnVisibility = "visible";
+
+
+    }
+    public async Task Delete(Product product)
+    {
+
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(DeleteProduct.Id), product.Id);
+        var productModal = ModalService.Show<DeleteProduct>("Delete", parameters);
+        var result = await productModal.Result;
+
+        if (result.Cancelled)
+        {
+            ToastService.ShowToast(ToastLevel.Info, "Delete cancelled");
+        }
+        else
+        {
+            Operation operation = new Operation();
+            operation.UserId = User.CurrentId;
+            operation.Description = User.CurrentUsername + " has deleted " + product.Name + " from database";
+            Pager pager = new Pager(page);
+            products = await ProductService.GetPagedProducts(pager);
+            ToastService.ShowToast(ToastLevel.Info, "Deleted " + product.Name + "from database");
+
+            await OperationService.CreateOperation(operation);
+        }
+
+
+    }
+    public async Task Edit(Product product)
+    {
+
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(EditProduct.Id), product.Id);
+        var productModal = ModalService.Show<EditProduct>("Delete", parameters);
+        var result = await productModal.Result;
+
+        if (result.Cancelled)
+        {
+            ToastService.ShowToast(ToastLevel.Info, "Delete cancelled");
+        }
+        else
+        {
+            Operation operation = new Operation();
+            operation.UserId = User.CurrentId;
+            operation.Description = User.CurrentUsername + " has edited " + product.Name + " in database";
+            Pager pager = new Pager(page);
+            products = await ProductService.GetPagedProducts(pager);
+            ToastService.ShowToast(ToastLevel.Info, "Edited " + product.Name + " in database");
+
+            await OperationService.CreateOperation(operation);
+        }
+    }
+    public async Task Add()
+    {
+        var parameters = new ModalParameters();
+        var productModal = ModalService.Show<AddProduct>("Add");
+        var result = await productModal.Result;
+
+        if (result.Cancelled)
+        {
+            ToastService.ShowToast(ToastLevel.Info, "Add cancelled");
+        }
+        else
+        {
+            Operation operation = new Operation();
+            operation.UserId = User.CurrentId;
+            operation.Description = User.CurrentUsername + " has added a product";
+            Pager pager = new Pager(page);
+            products = await ProductService.GetPagedProducts(pager);
+            ToastService.ShowToast(ToastLevel.Info, "Product added");
+
+            await OperationService.CreateOperation(operation);
+        }
     }
 }
 

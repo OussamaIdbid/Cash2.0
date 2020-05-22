@@ -72,7 +72,7 @@
 
             var parameters = new ModalParameters();
             parameters.Add(nameof(ProductModal.ProductId), product.Id);
-            var productModal = ModalService.Show<ProductModal>("Submit product", parameters);
+            var productModal = ModalService.Show<ProductModal>("Add product", parameters);
             var result = await productModal.Result;
 
             if (result.Cancelled)

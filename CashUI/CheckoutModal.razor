@@ -2,29 +2,30 @@
 @inject IOrderService OrderService
 @inject IOrderitemService OrderitemService
 @inject IToastService ToastService
+@inject IOperationService OperationService
 <div style="height:400px !important; overflow:auto;">
-<table class="table" >
-    <thead>
-        <tr>
-            <th>Product</th>
-            <th>Prijs</th>
-            <th>Q</th>
-            <th>Totaal</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item1 in orderItems)
-        {
-
+    <table class="table">
+        <thead>
             <tr>
-                <td>@item1.Product.Name</td>
-                <td>€@item1.Product.Price</td>
-                <td>@item1.Quantity</td>
-                <td>€@item1.TotalPrice</td>
+                <th>Product</th>
+                <th>Prijs</th>
+                <th>Q</th>
+                <th>Totaal</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item1 in orderItems)
+            {
+
+                <tr>
+                    <td>@item1.Product.Name</td>
+                    <td>€@item1.Product.Price</td>
+                    <td>@item1.Quantity</td>
+                    <td>€@item1.TotalPrice</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
 <p>Totaal: €@TotalPrice</p>
 
@@ -45,12 +46,12 @@
 
         foreach (var item in orderItems)
         {
-            TotalPrice += Math.Round(item.TotalPrice,2);
+            TotalPrice += Math.Round(item.TotalPrice, 2);
         }
 
         orders = await OrderService.GetOrders();
 
-        if(!orders.Any())
+        if (!orders.Any())
         {
             LatestOrderId = 1;
         }
@@ -74,8 +75,6 @@
         foreach (var item in orderItems)
         {
             order.TotalPrice += item.TotalPrice;
-            Console.WriteLine(order.TotalPrice);
-
         }
         await OrderService.CreateOrder(order);
 
