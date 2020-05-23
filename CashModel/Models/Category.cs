@@ -10,6 +10,8 @@ namespace CashModel
         public string CategoryName { get; set; }
         public string ImageUrl { get; set; }
         public static int AmountOfCategories { get; set; }
+        public string Color { get; set; }
+        public string TextColor { get; set; }
         public IList<Product> ListOfProducts { get; set; }
         
 

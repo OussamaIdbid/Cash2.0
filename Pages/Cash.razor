@@ -12,31 +12,33 @@
 }
 else
 {
-    <div id='main-container' class='container d-flex flex-row'>
+  
+<div class="row" id="cash-container">
+    <div id='left' class=' rounded col-md-8'>
+        <LeftContainer OnList1Changed="List1Changed"></LeftContainer>
+    </div>
 
-        <div id='left' class='container rounded col-7 justify-content-start'>
-            <LeftContainer OnList1Changed="List1Changed"></LeftContainer>
-        </div>
+    <div id='right' class='rounded col-md-3 bg-white'>
+        <Checkout>
+            <OrderItems OnProductRemoved="ProductRemoved" OnPriceReduced="PriceReduced" OnPriceIncreased="PriceIncreased" orderItems="@CurrentList1"></OrderItems>
+        </Checkout>
+        <div id='checkout-container' class="rounded">
+            <div id="price-container" class='text-muted'>
+                <p id='subtotal'>Subtotal €@RoundedTotalPrice</p>
+                <p id='discount'>Discount €0</p>
+                <p id='total'>Total €@RoundedTotalPrice</p>
+            </div>
+            <div id="checkout-buttons-container">
+                <button type="button" @onclick="(() => Checkout())" id="pin-button" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Checkout</button>
+                <button type="button" @onclick="@(() => TableSelect())" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Tables </button>
 
-        <div id='right' class='container rounded col-5 bg-white'>
-            <Checkout>
-                <OrderItems OnProductRemoved="ProductRemoved" OnPriceReduced="PriceReduced" OnPriceIncreased="PriceIncreased" orderItems="@CurrentList1"></OrderItems>
-            </Checkout>
-            <div id='checkout-container' class="rounded">
-                <div id="price-container" class='text-muted'>
-                    <p id='subtotal'>Subtotal €@RoundedTotalPrice</p>
-                    <p id='discount'>Discount €0</p>
-                    <p id='total'>Total €@RoundedTotalPrice</p>
-                </div>
-                <div id="checkout-buttons-container">
-                    <button type="button"  @onclick="(() => Checkout())" id="pin-button" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Checkout</button>
-                    <button type="button" @onclick="@(() => TableSelect())" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Tables </button>
-
-                </div>
             </div>
         </div>
-
     </div>
+
+</div>
+
+   
 
 }
 

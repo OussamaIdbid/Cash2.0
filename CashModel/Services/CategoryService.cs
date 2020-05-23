@@ -117,7 +117,7 @@ namespace CashModel
 
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                const string query = @"select * from dbo.Category where CategoryId =@CategoryId";
+                const string query = @"select * from dbo.Category where CategoryId  =@CategoryId";
 
                 if (conn.State == ConnectionState.Closed)
                     conn.Open();

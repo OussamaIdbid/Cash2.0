@@ -10,7 +10,7 @@ namespace CashModel
         //Task<bool> CreateProduct(Product product);  
         //Task<bool> EditProduct(int id, Product product);  
 
-        //Task<IList<Product>> GetProductsByCategory(int categoryId);
+        Task<Category> SingleCategory(int categoryId);
         //Task<Product> SingleProduct(int id);  
         //Task<bool> DeleteProduct(int id);  
     }

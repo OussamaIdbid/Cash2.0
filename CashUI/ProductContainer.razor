@@ -1,4 +1,5 @@
 ﻿@inject IProductService ProductService
+@inject ICategoryService CategoryService
 @inject ITableService TableService
 @inject IModalService ModalService
 @inject IToastService ToastService
@@ -16,11 +17,11 @@
         }
         else
         {
-            @foreach (var product in products)
+            @foreach (var item in products)
             {
 
-                <p class="product-test rounded shadow-sm " @onclick="(() => showName(product))">
-                    @product.Name
+                <p class="product-button rounded shadow-sm" style="background-color:@item.Color; color:@item.TextColor;" @onclick="(() => showName(item))">
+                    @item.Name
                 </p>
 
             }
@@ -43,11 +44,20 @@
     [Parameter] public EventCallback<List<OrderItem>> OnListChanged { get; set; }
 
     IEnumerable<Product> products;
+    Category category;
 
     protected override async Task OnParametersSetAsync()
     {
 
         products = await ProductService.GetProductsByCategory(Id);
+
+
+        foreach (var item in products)
+        {
+            category = await CategoryService.SingleCategory(item.CategoryId);
+
+            item.Color = category.Color;
+        }
 
     }
 
@@ -56,7 +66,7 @@
         IEnumerable<Table> tables = await TableService.GetTables();
         foreach (var item in tables)
         {
-            if(item.status == Table.Status.Taken)
+            if (item.status == Table.Status.Taken)
             {
                 Table.isTaken = true;
                 Table.CurrentTable = item.Id;

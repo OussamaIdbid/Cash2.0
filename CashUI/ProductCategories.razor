@@ -18,7 +18,7 @@
             @foreach (var item in categories)
             {
 
-                <p class="product-test rounded shadow-sm"  @onclick="(() => GetCategoryId(item))">
+                <p class="product-button rounded shadow-sm" style="background-color:@item.Color; color:@item.TextColor;"  @onclick="(() => GetCategoryId(item))">
                     @item.CategoryName
                 </p>
 
