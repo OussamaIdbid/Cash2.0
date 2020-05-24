@@ -64,12 +64,12 @@ namespace CashModel
         {
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                const string query = @"update dbo.Product set Name = @Name, Price = @Price where Id=@Id";
+                const string query = @"update dbo.Product set Name = @Name, Price = @Price, CategoryId = @CategoryId, TextColor = @textColor where Id=@Id";
                 if (conn.State == ConnectionState.Closed)
                     conn.Open();
                 try
                 {
-                    await conn.ExecuteAsync(query, new { product.Name, product.Price,product.CategoryId, id }, commandType: CommandType.Text);
+                    await conn.ExecuteAsync(query, new { product.Name, product.Price,product.CategoryId, product.textColor, id }, commandType: CommandType.Text);
                 }
                 catch (Exception ex)
                 {
