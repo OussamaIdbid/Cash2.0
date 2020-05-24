@@ -4,6 +4,7 @@
 @inject ITableService TableService
 @inject IToastService ToastService
 @inject IOperationService OperationService
+@inject IOptionOrderlineService OptionOrderlineService
 <div style="height:400px !important; overflow:auto;">
     <table class="table">
         <thead>
@@ -18,12 +19,13 @@
             @foreach (var item1 in orderItems)
             {
 
-                <tr>
-                    <td>@item1.Product.Name</td>
-                    <td>€@item1.Product.Price</td>
-                    <td>@item1.Quantity</td>
-                    <td>€@item1.TotalPrice</td>
-                </tr>
+            <tr>
+                <td>@item1.Product.Name</td>
+                <td>€@item1.Product.Price</td>
+                <td>@item1.Quantity</td>
+                <td>€@item1.TotalPrice</td>
+                <td class="order-line" @onclick="(() => ShowOptions(item1))">options</td>
+            </tr>
             }
         </tbody>
     </table>
@@ -36,15 +38,18 @@
 
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
     [Parameter] public List<OrderItem> orderItems { get; set; }
+
     Operation operation = new Operation();
 
     public int LatestOrderId { get; set; }
+    public int LatestOrderItemId { get; set; }
     public double TotalPrice { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
 
         IEnumerable<Order> orders;
+        IEnumerable<OrderItem> orderItems1;
 
         foreach (var item in orderItems)
         {
@@ -52,6 +57,7 @@
         }
 
         orders = await OrderService.GetOrders();
+        orderItems1 = await OrderitemService.GetOrderitems();
 
         if (!orders.Any())
         {
@@ -59,17 +65,28 @@
         }
         else
         {
-            foreach (var item in orders)
-            {
-                LatestOrderId++;
-            }
+            LatestOrderId = orders.Last().Id + 1;
+        }
 
-            LatestOrderId++;
+        if (!orderItems1.Any())
+        {
+            LatestOrderItemId = 1;
+        }
+        else
+        {
+            LatestOrderItemId = orderItems1.Last().Id + 1;
+            Console.WriteLine(LatestOrderItemId);
         }
 
 
-    }
 
+    }
+    public void ShowOptions(OrderItem orderitem)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(OrderlineOptions.options), orderitem.Options);
+        var optionsModal = ModalService.Show<OrderlineOptions>("Selected Options", parameters);
+    }
     public async Task Checkout()
     {
         Order order = new Order();
@@ -87,6 +104,25 @@
             item.ProductId = item.Product.Id;
 
             await OrderitemService.CreateOrderitem(item);
+        }
+        foreach (var item in orderItems)
+        {
+            if (item.Options.Any())
+            {
+
+                foreach(var item1 in item.Options)
+                {
+                    OptionOrderline optionOrderline = new OptionOrderline();
+                    optionOrderline.OptionId = item1.Id;
+                    optionOrderline.OrderlineId = LatestOrderItemId;
+                    await OptionOrderlineService.CreateOptionOrderline(optionOrderline);
+
+
+                }
+
+
+            }
+            LatestOrderItemId++;
         }
 
         IEnumerable<Table> tables = await TableService.GetTables();

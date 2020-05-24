@@ -11,10 +11,15 @@ namespace CashModel
         public double Price { get; set; }
         public int CategoryId { get; set; }
         public string Color { get; set; }
-        public string TextColor { get; set; }
+        public TextColor textColor { get; set; }
         public static double TotalPrice = 0;
 
 
+        public enum TextColor
+        {
+            white,
+            black
+        }
     }
 }
 

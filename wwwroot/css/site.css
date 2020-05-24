@@ -65,6 +65,7 @@ app {
 .nav-item {
     font-size: 0.9rem;
     padding-bottom: 0.5rem;
+    padding:6px !important;
 }
 
     .nav-item:first-of-type {
@@ -388,9 +389,9 @@ app{
 {
     font-size: 1.75rem;
     align-self: center;
-    margin-left: 2rem;
     opacity: 0.3;
     font-size: larger;
+    margin-left:3rem;
 }
 #vl {
     border-left: 2px solid lightgrey;
@@ -400,7 +401,6 @@ app{
     margin-right: auto;
 }
 #username {
-    margin-left:1rem;
     font-size: large;
     align-self: center;
     opacity: 0.4;
@@ -424,4 +424,12 @@ td{
 }
 #logout-icon{
     color:tomato;
+}
+#add-option-container{
+    max-height:300px;
+    overflow-y:auto;
+}
+#option-edit-container{
+    max-height:200px;
+    overflow-y:auto;
 }

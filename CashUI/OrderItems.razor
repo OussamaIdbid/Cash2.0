@@ -1,5 +1,5 @@
 ﻿@inject IOperationService OperationService
-
+@inject IModalService ModalService
 @if (orderItems == null)
 {
     <table class="table">
@@ -30,13 +30,15 @@
                 @foreach (var item1 in orderItems)
                 {
 
-                    <tr>
-                        <td class="order-line">@item1.Product.Name</td>
-                        <td class="order-line">€@item1.Product.Price</td>
-                        <td class="d-flex flex-row"><span  @onclick="(() => ReduceQuantity(item1))" style="cursor:pointer; visibility:@item1.MinusBtnVisibility;" class="material-icons">remove</span><p class="m-1">@item1.Quantity</p><span @onclick="(() => IncreaseQuantity(item1))" style="cursor:pointer" class="material-icons">add</span></td>
-                        <td class="order-line">€@item1.TotalPrice</td>
-                        <td style="cursor:pointer" @onclick="(() => Remove(item1))"><span class="material-icons">delete</span></td>
-                    </tr>
+                <tr>
+                    <td class="order-line">@item1.Product.Name</td>
+                    <td class="order-line">€@item1.Product.Price</td>
+                    <td class="d-flex flex-row"><span @onclick="(() => ReduceQuantity(item1))" style="cursor:pointer; visibility:@item1.MinusBtnVisibility;" class="material-icons">remove</span><p class="m-1">@item1.Quantity</p><span @onclick="(() => IncreaseQuantity(item1))" style="cursor:pointer" class="material-icons">add</span></td>
+                    <td class="order-line">€@item1.TotalPrice</td>
+                    <td class="order-line" @onclick="(() => ShowOptions(item1))">options</td>
+
+                    <td style="cursor:pointer" @onclick="(() => Remove(item1))"><span class="material-icons">delete</span></td>
+                </tr>
                 }
             </tbody>
         </table>
@@ -104,6 +106,12 @@
                     OnProductRemoved.InvokeAsync(orderItems);
                 }
 
+            }
+            public void ShowOptions(OrderItem orderitem)
+            {
+                var parameters = new ModalParameters();
+                parameters.Add(nameof(OrderlineOptions.options), orderitem.Options);
+                var optionsModal = ModalService.Show<OrderlineOptions>("Selected Options", parameters);
             }
             protected override async Task OnParametersSetAsync()
             {

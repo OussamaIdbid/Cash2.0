@@ -2,11 +2,12 @@
 @inject IProductService ProductService
 @inject ICategoryService CategoryService
 @inject IToastService ToastService
+@inject IOptionService OptionService
     <div class="simple-form">
 
         <div class="form-group">
             <label for="name-field">Name</label>
-            <input @bind="@product.Name" type="text" id="name-field"/>
+            <input @bind="@product.Name" type="text" id="name-field" />
         </div>
 
         <div class="form-group">
@@ -14,7 +15,18 @@
             <input @bind="@product.Price" type="text" id="price-field" />
         </div>
         <div class="form-group">
-            <label for="Category" class="control-label">Category</label>
+            <label for="textColor" class="control-label">Text color</label>
+            <select id='text-color-input' for="TextColor" class="form-control" @bind="@product.textColor">
+
+                <option value="@Product.TextColor.white">@Product.TextColor.white</option>
+                <option value="@Product.TextColor.black">@Product.TextColor.black</option>
+
+
+
+            </select>
+        </div>
+
+        <div class="form-group">
             <select id='category-input' for="Category" class="form-control" @bind="@product.CategoryId">
                 <option id="category-placeholder" value="Selecteer categorie"></option>
                 @foreach (var category in categories)
@@ -26,35 +38,94 @@
                 }
             </select>
         </div>
+        <div class="form-group">
+            <label for="price-field">Add option</label>
+            <input @bind="@option.Description" type="text" id="option-add-field" />
+            <button class="btn btn-sm  btn-primary shadow-sm checkout-button m-1" @onclick="(() => AddOption())">Submit</button>
+        </div>
+        <br />
+        <p>Options</p>
+        <div id="option-edit-container">
+            @foreach (var item in FilteredOptions)
+            {
+                <div class="d-flex flex-row">
+                    <div class="form-group">
+                        <label for="price-field">Option</label>
+                        <input @bind="@item.Description" type="text" id="option-field" />
+                    </div>
+                    <td style="cursor:pointer" @onclick="(() => RemoveOption(item))"><span class="material-icons">delete</span></td>
+                </div>
+            }
+        </div>
+
+
+
         <button class="btn  btn-primary shadow-sm checkout-button m-1" @onclick="ConfirmClose">Submit</button>
         <button class="btn  btn-primary shadow-sm checkout-button m-1" @onclick="CancelClose">Cancel</button>
     </div>
-@code {
+        @code {
 
-    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
-    [Parameter] public int Id { get; set; }
-    IEnumerable<Category> categories = new List<Category>();
-    Product product = new Product();
-
-
-
-    protected override async Task OnInitializedAsync()
-    {
-        product = await ProductService.SingleProduct(Id);
-        categories = await CategoryService.GetCategories();
-    }
-    public async Task ConfirmClose()
-    {
-        await ProductService.EditProduct(Id, product);
-
-        BlazoredModal.Close();
-
-    }
-    public void CancelClose()
-    {
+            [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
+            [Parameter] public int Id { get; set; }
+            IEnumerable<Option> options = new List<Option>();
+            List<Option> FilteredOptions = new List<Option>();
+            Option option = new Option();
+            IEnumerable<Category> categories = new List<Category>();
+            Product product = new Product();
 
 
-        BlazoredModal.Cancel();
 
-    }
-}
+            protected override async Task OnInitializedAsync()
+            {
+                product = await ProductService.SingleProduct(Id);
+                categories = await CategoryService.GetCategories();
+                options = await OptionService.GetOptions();
+
+                foreach(var item in options)
+                {
+                    if(item.ProductId == Id)
+                    {
+                        FilteredOptions.Add(item);
+                    }
+                }
+                option.ProductId = Id;
+            }
+            public async Task ConfirmClose()
+            {
+
+                await ProductService.EditProduct(Id, product);
+
+                foreach (var item in FilteredOptions)
+                {
+                    await OptionService.EditOption(item.Id, item);
+                }
+
+                BlazoredModal.Close();
+
+            }
+            public void CancelClose()
+            {
+
+
+                BlazoredModal.Cancel();
+
+            }
+            public async Task RemoveOption(Option option)
+            {
+
+                await OptionService.DeleteOption(option.Id);
+                FilteredOptions.Remove(option);
+
+            }
+            public async Task AddOption()
+            {
+                Option newOption = new Option();
+                newOption.Description = option.Description;
+                newOption.ProductId = Id;
+                FilteredOptions.Add(newOption);
+                await OptionService.CreateOption(newOption);
+
+                option.Description = null;
+
+            }
+        }

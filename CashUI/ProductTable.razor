@@ -160,12 +160,12 @@ else
 
         var parameters = new ModalParameters();
         parameters.Add(nameof(EditProduct.Id), product.Id);
-        var productModal = ModalService.Show<EditProduct>("Delete", parameters);
+        var productModal = ModalService.Show<EditProduct>("Edit", parameters);
         var result = await productModal.Result;
 
         if (result.Cancelled)
         {
-            ToastService.ShowToast(ToastLevel.Info, "Delete cancelled");
+            ToastService.ShowToast(ToastLevel.Info, "Edit cancelled");
         }
         else
         {

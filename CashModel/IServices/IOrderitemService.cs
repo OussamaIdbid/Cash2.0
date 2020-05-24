@@ -6,7 +6,7 @@ namespace CashModel
 {
     public interface IOrderitemService
     {
-        //Task<IEnumerable<Product>> GetProducts();
+        Task<IEnumerable<OrderItem>> GetOrderitems();
         Task<bool> CreateOrderitem(OrderItem orderItem);
         /*Task<bool> EditProduct(int id, Product product);
 

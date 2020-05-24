@@ -13,5 +13,6 @@ namespace CashModel
         public int OrderId { get; set; }
         public string MinusBtnVisibility { get; set; }
         public Product Product { get; set; }
+        public List<Option> Options { get; set; }
     }
 }
