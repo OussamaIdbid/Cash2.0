@@ -1,0 +1,50 @@
+﻿@using CashModel
+@using CashUI
+@inject ICategoryService CategoryService
+@inject IModalService ModalService
+
+
+<h2>Create Product</h2>
+<hr />
+<div class="simple-form">
+
+    <div class="form-group">
+        <label for="name-field">Name</label>
+        <input @bind="@category.CategoryName" type="text" id="name-field" />
+    </div>
+
+    <div class="form-group">
+        <label for="price-field">Color</label>
+        <input @bind="@category.Color" type="text" id="price-field" />
+    </div>
+
+    <button class="btn  btn-primary shadow-sm checkout-button m-1" @onclick="ConfirmClose">Submit</button>
+    <button class="btn  btn-primary shadow-sm checkout-button m-1" @onclick="CancelClose">Cancel</button>
+</div>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
+    Category category = new Category();
+
+
+    int LatestId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+    public async Task ConfirmClose()
+    {
+        category.TextColor = "white";  
+        await CategoryService.CreateCategory(category);
+
+
+        BlazoredModal.Close();
+
+    }
+    public void CancelClose()
+    {
+        BlazoredModal.Cancel();
+
+    }
+}
