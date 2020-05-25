@@ -18,12 +18,12 @@ namespace CashModel
         {
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                const string query = @"insert into dbo.Category (Name) values (@Name,@Price)";
+                const string query = @"insert into dbo.Category (CategoryName,TextColor,Color) values (@CategoryName,@TextColor,@Color)";
                 if (conn.State == ConnectionState.Closed)
                     conn.Open();
                 try
                 {
-                    await conn.ExecuteAsync(query, new { category.CategoryName }, commandType: CommandType.Text);
+                    await conn.ExecuteAsync(query, new { category.CategoryName, category.TextColor, category.Color }, commandType: CommandType.Text);
                 }
                 catch (Exception ex)
                 {
@@ -64,12 +64,12 @@ namespace CashModel
         {
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                const string query = @"update dbo.Category set Name = @Name where CategoryId=@CategoryId";
+                const string query = @"update dbo.Category set CategoryName = @CategoryName, Color = @Color, TextColor = @TextColor where CategoryId=@CategoryId";
                 if (conn.State == ConnectionState.Closed)
                     conn.Open();
                 try
                 {
-                    await conn.ExecuteAsync(query, new { category.CategoryName, CategoryId }, commandType: CommandType.Text);
+                    await conn.ExecuteAsync(query, new { category.CategoryName, category.Color, category.TextColor, CategoryId }, commandType: CommandType.Text);
                 }
                 catch (Exception ex)
                 {
@@ -136,6 +136,36 @@ namespace CashModel
                 }
             }
             return category;
+        }
+        public async Task<IEnumerable<Category>> GetPagedCategories(Pager pager)
+        {
+            IEnumerable<Category> categories;
+            using (var conn = new SqlConnection(_configuration.Value))
+            {
+
+                var query = @"SELECT * FROM cash.dbo.Category order by CategoryId OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
+
+
+                if (conn.State == ConnectionState.Closed)
+                    conn.Open();
+                try
+                {
+                    categories = await conn.QueryAsync<Category>(query, pager);
+
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+                }
+
+            }
+            return categories;
+
         }
     }
 }
