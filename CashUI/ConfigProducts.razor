@@ -16,7 +16,7 @@
             @foreach (var product in products)
             {
 
-                <p class="product-test shadow" @onclick="(() => SwapProducts(product))">
+                <p class="product-button shadow" @onclick="(() => SwapProducts(product))">
                     @product.Name
                 </p>
 
@@ -70,6 +70,8 @@
 
             ToastService.ShowToast(ToastLevel.Info, product1.Name + " is being swapped with " + product2.Name);
             Console.WriteLine(product1.Name + " is being swapped with " + product2.Name);
+
+            products = await ProductService.GetProductsByCategory(Id);
 
 
         }

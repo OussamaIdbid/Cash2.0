@@ -10,6 +10,7 @@ namespace CashModel
         public static int CurrentTable { get; set; }
         public int Id { get; set; }
         public Status status { get; set; }
+        public List<OrderItem> orderItems { get; set; }
 
 
 
