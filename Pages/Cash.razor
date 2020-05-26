@@ -12,33 +12,32 @@
 }
 else
 {
-  
-<div class="row" id="cash-container">
-    <div id='left' class='rounded col-md-8'>
-        <LeftContainer OnList1Changed="List1Changed"></LeftContainer>
-    </div>
 
-    <div id='right' class='rounded col-md-3 bg-white'>
-        <Checkout>
-            <OrderItems OnProductRemoved="ProductRemoved" OnPriceReduced="PriceReduced" OnPriceIncreased="PriceIncreased" orderItems="@CurrentList1"></OrderItems>
-        </Checkout>
-        <div id='checkout-container' class="rounded">
-            <div id="price-container" class='text-muted'>
-                <p id='subtotal'>Subtotal €@RoundedTotalPrice</p>
-                <p id='discount'>Discount €0</p>
-                <p id='total'>Total €@RoundedTotalPrice</p>
-            </div>
-            <div id="checkout-buttons-container">
-                <button type="button" @onclick="(() => Checkout())" id="pin-button" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Checkout</button>
-                <button type="button" @onclick="@(() => TableSelect())" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Tables </button>
+    <div class="row" id="cash-container">
+        <div id='left' class='rounded col-md-8'>
+            <LeftContainer OnList1Changed="List1Changed"></LeftContainer>
+        </div>
 
+        <div id='right' class='rounded col-md-3 bg-white'>
+            <Checkout>
+                <OrderItems OnProductRemoved="ProductRemoved" OnPriceReduced="PriceReduced" OnPriceIncreased="PriceIncreased" orderItems="@CurrentList1"></OrderItems>
+            </Checkout>
+            <div id='checkout-container' class="rounded">
+                <div id="price-container" class='text-muted'>
+                    <p id='subtotal'>Subtotal €@RoundedTotalPrice</p>
+                    <p id='discount'>Discount €0</p>
+                    <p id='total'>Total €@RoundedTotalPrice</p>
+                </div>
+                <div id="checkout-buttons-container">
+                    <button type="button" @onclick="(() => Checkout())" id="pin-button" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Checkout</button>
+                    <button type="button" @onclick="@(() => TableSelect())" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Tables </button>
+
+                </div>
             </div>
         </div>
+
     </div>
 
-</div>
-
-   
 
 }
 
@@ -49,7 +48,6 @@ else
     string Username = User.CurrentUsername;
     public List<OrderItem> CurrentList1 = new List<OrderItem>();
     public List<OrderItem> NewOrderlist = new List<OrderItem>();
-
     public double totalPrice;
     public double RoundedTotalPrice;
 
@@ -63,9 +61,15 @@ else
 
     [Parameter] public EventCallback<List<OrderItem>> OnList2Changed { get; set; }
 
-    public async void List1Changed(List<OrderItem> List)
+    public async void List1Changed(OrderItem List)
     {
-        CurrentList1 = List;
+
+        Console.WriteLine(List);
+        CurrentList1.Add(List);
+        foreach (var item in CurrentList1)
+        {
+            Console.WriteLine(item.Product.Name);
+        }
         await OnList2Changed.InvokeAsync(CurrentList1);
         Product.TotalPrice = 0;
         totalPrice = 0;
@@ -87,10 +91,10 @@ else
         totalPrice += PriceIncrease;
         RoundedTotalPrice = Math.Round(totalPrice, 2);
     }
-    public async void ProductRemoved(List<OrderItem> orderItems)
+    public async void ProductRemoved(OrderItem orderItems)
     {
 
-        CurrentList1 = orderItems;
+        CurrentList1.Remove(orderItems);
     }
 
 
@@ -107,8 +111,9 @@ else
         };
         var parameters = new ModalParameters();
         parameters.Add(nameof(CashUI.TableSelect.orderIsEmpty), OrderIsEmpty);
-        var TableModal = ModalService.Show<TableSelect>("Add product", parameters,options);
+        var TableModal = ModalService.Show<TableSelect>("Select Table", parameters, options);
         var result = await TableModal.Result;
+
 
         if((bool)result.Data == false)
         {
@@ -117,7 +122,7 @@ else
     }
     public async Task Checkout()
     {
-        if(CurrentList1.Count == 0)
+        if (CurrentList1.Count == 0)
         {
             ToastService.ShowToast(ToastLevel.Info, "Order is empty");
 
@@ -141,7 +146,7 @@ else
 
                 CurrentList1 = (List<OrderItem>)result.Data;
                 RoundedTotalPrice = 0;
-                
+
 
             }
         }

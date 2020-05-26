@@ -52,147 +52,178 @@ else
             string NextBtnVisibility;
             string PreviousBtnVisibility;
 
-    protected override async Task OnParametersSetAsync()
-        {
-            Pager pager = new Pager(page);
-
-            categories = await CategoryService.GetPagedCategories(pager);
-
-            Pager pagerNext = new Pager((page + 1));
-
-            IEnumerable<Category> NextPageCategory = await CategoryService.GetPagedCategories(pagerNext);
-
-            if (categories.Count() <= 10 && !NextPageCategory.Any())
+            protected override async Task OnParametersSetAsync()
             {
-                NextBtnVisibility = "hidden";
-                PreviousBtnVisibility = "hidden";
+                Pager pager = new Pager(page);
+
+                categories = await CategoryService.GetPagedCategories(pager);
+
+                Pager pagerNext = new Pager((page + 1));
+
+                IEnumerable<Category> NextPageCategory = await CategoryService.GetPagedCategories(pagerNext);
+
+                if (categories.Count() <= 10 && !NextPageCategory.Any())
+                {
+                    NextBtnVisibility = "hidden";
+                    PreviousBtnVisibility = "hidden";
+                }
+                else if (NextPageCategory.Any())
+                {
+                    NextBtnVisibility = "visible";
+                    PreviousBtnVisibility = "hidden";
+                }
+                else
+                {
+                    NextBtnVisibility = "visible";
+                    PreviousBtnVisibility = "hidden";
+                }
+                //  categories = await CategoryService.GetCategories();
             }
-            else if (NextPageCategory.Any())
+            public async Task NextPage()
             {
+                page++;
+                Pager pager = new Pager(page);
+                categories = await CategoryService.GetPagedCategories(pager);
+                /*foreach (var item in products)
+                {
+                    Console.WriteLine(item.Id);
+                }*/
+                Pager pagerNext = new Pager((page + 1));
+                IEnumerable<Category> NextPageCategories = await CategoryService.GetPagedCategories(pagerNext);
+
+                if (page > 1)
+                {
+                    PreviousBtnVisibility = "visible";
+                }
+                if (!NextPageCategories.Any())
+                {
+                    NextBtnVisibility = "hidden";
+                }
+
+
+
+            }
+            public async Task PreviousPage()
+            {
+                page--;
+                Pager pager = new Pager(page);
+                categories = await CategoryService.GetPagedCategories(pager);
+                /*foreach (var item in products)
+                {
+                    Console.WriteLine(item.Id);
+                }*/
+                if (page == 1)
+                {
+                    PreviousBtnVisibility = "hidden";
+                }
+
                 NextBtnVisibility = "visible";
-                PreviousBtnVisibility = "hidden";
+
+
             }
-            else
+            public async Task Delete(Category category)
             {
-                NextBtnVisibility = "visible";
-                PreviousBtnVisibility = "hidden";
+
+                var parameters = new ModalParameters();
+                parameters.Add(nameof(DeleteCategory.Id), category.CategoryId);
+                var categoryModal = ModalService.Show<DeleteCategory>("Delete", parameters);
+                var result = await categoryModal.Result;
+
+                if (result.Cancelled)
+                {
+                    ToastService.ShowToast(ToastLevel.Info, "Delete cancelled");
+                }
+                else
+                {
+                    Operation operation = new Operation();
+                    operation.UserId = User.CurrentId;
+                    operation.Description = User.CurrentUsername + " has deleted " + category.CategoryName + " from database";
+                    Pager pager = new Pager(page);
+
+                    categories = await CategoryService.GetPagedCategories(pager);
+                    Console.WriteLine(page);
+                    Console.WriteLine(categories.Count());
+
+                    if (categories.Count() == 0)
+                    {
+
+
+                        Console.WriteLine("this page is empty");
+                        page--;
+                        Pager pager2 = new Pager(page);
+                        categories = await CategoryService.GetPagedCategories(pager2);
+
+                        if(page == 1)
+                        {
+                            PreviousBtnVisibility = "hidden";
+                            NextBtnVisibility = "hidden";
+
+                        }
+
+                    }
+
+                    ToastService.ShowToast(ToastLevel.Info, "Deleted " + category.CategoryName + "from database");
+
+                    await OperationService.CreateOperation(operation);
+                }
+
+
             }
-            //  categories = await CategoryService.GetCategories();
-        }
-        public async Task NextPage()
-        {
-            page++;
-            Pager pager = new Pager(page);
-            categories = await CategoryService.GetPagedCategories(pager);
-            /*foreach (var item in products)
+            public async Task Edit(Category category)
             {
-                Console.WriteLine(item.Id);
-            }*/
-            Pager pagerNext = new Pager((page + 1));
-            IEnumerable<Category> NextPageProducts = await CategoryService.GetPagedCategories(pagerNext);
 
-            if (page > 1)
-            {
-                PreviousBtnVisibility = "visible";
+                var parameters = new ModalParameters();
+                parameters.Add(nameof(EditCategory.Id), category.CategoryId);
+                var categoryModal = ModalService.Show<EditCategory>("Edit", parameters);
+                var result = await categoryModal.Result;
+
+                if (result.Cancelled)
+                {
+                    ToastService.ShowToast(ToastLevel.Info, "Edit cancelled");
+                }
+                else
+                {
+                    Operation operation = new Operation();
+                    operation.UserId = User.CurrentId;
+                    operation.Description = User.CurrentUsername + " has edited " + category.CategoryName + " in database";
+                    Pager pager = new Pager(page);
+                    categories = await CategoryService.GetPagedCategories(pager);
+                    ToastService.ShowToast(ToastLevel.Info, "Edited " + category.CategoryName + " in database");
+
+                    await OperationService.CreateOperation(operation);
+                }
             }
-            if (!NextPageProducts.Any())
+            public async Task Add()
             {
-                NextBtnVisibility = "hidden";
+                var parameters = new ModalParameters();
+                var productModal = ModalService.Show<AddCategory>("Add");
+                var result = await productModal.Result;
+
+                if (result.Cancelled)
+                {
+                    ToastService.ShowToast(ToastLevel.Info, "Add cancelled");
+                }
+                else
+                {
+                    Operation operation = new Operation();
+                    operation.UserId = User.CurrentId;
+                    operation.Description = User.CurrentUsername + " has added a product";
+                    Pager pager = new Pager(page);
+                    categories = await CategoryService.GetPagedCategories(pager);
+
+                    Pager pagerNext = new Pager((page + 1));
+                    IEnumerable<Category> NextPageCategories = await CategoryService.GetPagedCategories(pagerNext);
+
+                    if (NextPageCategories.Any())
+                    {
+                        NextBtnVisibility = "visible";
+
+                    }
+
+                    ToastService.ShowToast(ToastLevel.Info, "Product added");
+
+                    await OperationService.CreateOperation(operation);
+                }
             }
-
-
-
-        }
-        public async Task PreviousPage()
-        {
-            page--;
-            Pager pager = new Pager(page);
-            categories = await CategoryService.GetPagedCategories(pager);
-            /*foreach (var item in products)
-            {
-                Console.WriteLine(item.Id);
-            }*/
-            if (page == 1)
-            {
-                PreviousBtnVisibility = "hidden";
-            }
-
-            NextBtnVisibility = "visible";
-
-
-        }
-        public async Task Delete(Category category)
-        {
-
-            var parameters = new ModalParameters();
-            parameters.Add(nameof(DeleteCategory.Id), category.CategoryId);
-            var categoryModal = ModalService.Show<DeleteCategory>("Delete", parameters);
-            var result = await categoryModal.Result;
-
-            if (result.Cancelled)
-            {
-                ToastService.ShowToast(ToastLevel.Info, "Delete cancelled");
-            }
-            else
-            {
-                Operation operation = new Operation();
-                operation.UserId = User.CurrentId;
-                operation.Description = User.CurrentUsername + " has deleted " + category.CategoryName + " from database";
-                Pager pager = new Pager(page);
-                categories = await CategoryService.GetPagedCategories(pager);
-
-                ToastService.ShowToast(ToastLevel.Info, "Deleted " + category.CategoryName + "from database");
-
-                await OperationService.CreateOperation(operation);
-            }
-
-
-        }
-        public async Task Edit(Category category)
-        {
-
-            var parameters = new ModalParameters();
-            parameters.Add(nameof(EditCategory.Id), category.CategoryId);
-            var categoryModal = ModalService.Show<EditCategory>("Edit", parameters);
-            var result = await categoryModal.Result;
-
-            if (result.Cancelled)
-            {
-                ToastService.ShowToast(ToastLevel.Info, "Edit cancelled");
-            }
-            else
-            {
-                Operation operation = new Operation();
-                operation.UserId = User.CurrentId;
-                operation.Description = User.CurrentUsername + " has edited " + category.CategoryName + " in database";
-                Pager pager = new Pager(page);
-                categories = await CategoryService.GetPagedCategories(pager);
-                ToastService.ShowToast(ToastLevel.Info, "Edited " + category.CategoryName + " in database");
-
-                await OperationService.CreateOperation(operation);
-            }
-        }
-        public async Task Add()
-        {
-            var parameters = new ModalParameters();
-            var productModal = ModalService.Show<AddCategory>("Add");
-            var result = await productModal.Result;
-
-            if (result.Cancelled)
-            {
-                ToastService.ShowToast(ToastLevel.Info, "Add cancelled");
-            }
-            else
-            {
-                Operation operation = new Operation();
-                operation.UserId = User.CurrentId;
-                operation.Description = User.CurrentUsername + " has added a product";
-                Pager pager = new Pager(page);
-                categories = await CategoryService.GetPagedCategories(pager);
-                ToastService.ShowToast(ToastLevel.Info, "Product added");
-
-                await OperationService.CreateOperation(operation);
-            }
-        }
         }
 

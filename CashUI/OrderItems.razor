@@ -53,20 +53,20 @@
 
             [Parameter] public EventCallback<double> OnPriceReduced { get; set; }
             [Parameter] public EventCallback<double> OnPriceIncreased { get; set; }
-            [Parameter] public EventCallback<List<OrderItem>> OnProductRemoved { get; set; }
+            [Parameter] public EventCallback<OrderItem> OnProductRemoved { get; set; }
 
 
             protected async Task Remove(OrderItem orderItem)
             {
                 double PriceReduction = orderItem.TotalPrice;
 
-                orderItems.Remove(orderItem);
+                //orderItems.Remove(orderItem);
 
 
                 operation.Description = User.CurrentUsername + " has removed " + orderItem.Product.Name + " from order";
 
                 OnPriceReduced.InvokeAsync(PriceReduction);
-                OnProductRemoved.InvokeAsync(orderItems);
+                OnProductRemoved.InvokeAsync(orderItem);
 
                 await OperationService.CreateOperation(operation);
 
@@ -78,11 +78,13 @@
                 orderItem.Quantity--;
                 orderItem.TotalPrice -= orderItem.Product.Price;
                 OnPriceReduced.InvokeAsync(orderItem.Product.Price);
-                OnProductRemoved.InvokeAsync(orderItems);
 
-                if (orderItem.Quantity == 1)
+
+                if (orderItem.Quantity == 0)
                 {
                     orderItem.MinusBtnVisibility = "hidden";
+                    OnProductRemoved.InvokeAsync(orderItem);
+
                 }
 
 
@@ -96,14 +98,14 @@
                     orderItem.Quantity++;
                     orderItem.TotalPrice += orderItem.Product.Price;
                     OnPriceIncreased.InvokeAsync(orderItem.Product.Price);
-                    OnProductRemoved.InvokeAsync(orderItems);
+                    //3OnProductRemoved.InvokeAsync(orderItem);
                 }
                 else
                 {
                     orderItem.Quantity++;
                     orderItem.TotalPrice += orderItem.Product.Price;
                     OnPriceIncreased.InvokeAsync(orderItem.Product.Price);
-                    OnProductRemoved.InvokeAsync(orderItems);
+                    //OnProductRemoved.InvokeAsync(orderItem);
                 }
 
             }
@@ -115,18 +117,23 @@
             }
             protected override async Task OnParametersSetAsync()
             {
+
+                Console.WriteLine(orderItems.Count());
+
                 operation.UserId = User.CurrentId;
-                foreach(var item in orderItems)
+                foreach (var item in orderItems)
                 {
-                    if(item.Quantity == 1)
+                    if (item.Quantity == 1)
                     {
-                        item.MinusBtnVisibility = "hidden";
+                        item.MinusBtnVisibility = "visible";
                     }
                     else
                     {
                         item.MinusBtnVisibility = "visible";
                     }
                 }
+
+
 
 
             }

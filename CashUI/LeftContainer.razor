@@ -9,9 +9,9 @@
 
     @code {
         public int SelectedId = 0;
-        public List<OrderItem> CurrentList = new List<OrderItem>();
+        public OrderItem CurrentList = new OrderItem();
         public IEnumerable<Product> Products;
-        [Parameter] public EventCallback<List<OrderItem>> OnList1Changed { get; set; }
+        [Parameter] public EventCallback<OrderItem> OnList1Changed { get; set; }
 
 
         public async void IdChanged(int id)
@@ -19,7 +19,7 @@
             SelectedId = id;
         }
 
-        public async void ListChanged(List<OrderItem> List)
+        public async void ListChanged(OrderItem List)
         {
             CurrentList = List;
             await OnList1Changed.InvokeAsync(CurrentList);

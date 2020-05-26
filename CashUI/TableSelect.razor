@@ -142,6 +142,7 @@
     {
 
         IEnumerable<Table> tables;
+        List<Table> SelectedTables = new List<Table>();
 
         tables = await TableService.GetTables();
 
@@ -150,6 +151,7 @@
             if(item.status == Table.Status.Taken)
             {
                 IsTaken = true;
+                SelectedTables.Add(item);
             }
 
         }

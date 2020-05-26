@@ -39,9 +39,9 @@
 
     bool TableIsTaken = false;
 
-    public List<OrderItem> orderItems = new List<OrderItem>();
+    public OrderItem orderItems = new OrderItem();
 
-    [Parameter] public EventCallback<List<OrderItem>> OnListChanged { get; set; }
+    [Parameter] public EventCallback<OrderItem> OnListChanged { get; set; }
 
     IEnumerable<Product> products;
     Category category;
@@ -94,8 +94,8 @@
 
                 OrderItem SubmittedItem = (OrderItem)result.Data;
                 SubmittedItem.TotalPrice = Math.Round(SubmittedItem.TotalPrice, 2);
-                orderItems.Add(SubmittedItem);
-                OnListChanged.InvokeAsync(orderItems);
+                //orderItems.Add(SubmittedItem);
+                OnListChanged.InvokeAsync(SubmittedItem);
                 SendOperation();
             }
         }
@@ -109,8 +109,8 @@
 
     public void OrderSubmit(OrderItem orderItem)
     {
-        orderItems.Add(orderItem);
-        OnListChanged.InvokeAsync(orderItems);
+        
+        OnListChanged.InvokeAsync(orderItem);
     }
     protected async Task SendOperation()
     {

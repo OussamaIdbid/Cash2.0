@@ -11,6 +11,7 @@ namespace CashModel
         public int Id { get; set; }
         public Status status { get; set; }
         public List<OrderItem> orderItems { get; set; }
+        public bool active { get; set; }
 
 
 

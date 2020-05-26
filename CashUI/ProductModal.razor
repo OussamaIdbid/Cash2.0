@@ -109,6 +109,10 @@
             ToastService.ShowToast(ToastLevel.Info, "Option already added");
             isDuplicateOption = false;
         }
+        else if (SelectedOption == null)
+        {
+            Console.WriteLine("no option selected");
+        }
         else
         {
             SelectedOptions.Add(SelectedOption);
