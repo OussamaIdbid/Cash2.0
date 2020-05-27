@@ -16,7 +16,7 @@ else
     <div class="d-flex flex-row">
         @foreach (var item in SelectedTables)
         {
-            <button type="button" @onclick="@(() => Activate(item))" class="btn btn btn-primary shadow-sm checkout-button m-1">@item.Id </button>
+            <button type="button" @onclick="@(() => Activate(item))" class="btn btn btn-primary shadow-sm checkout-button m-1">@item.TableNumber </button>
             <button type="button" @onclick="@(() => CloseTable(item))" class="btn btn btn-primary shadow-sm checkout-button m-1"> Close table</button>
 
         }
@@ -90,7 +90,7 @@ else
             item.active = false;
         }
         table.active = true;
-        Console.WriteLine(table.Id + " is active");
+        Console.WriteLine(table.TableNumber + " is active");
         Table.CurrentTable = table.Id;
         SelectedTable = table;
         RoundedTotalPrice = 0;
@@ -199,7 +199,7 @@ else
     }
     public async Task Checkout()
     {
-        if (SelectedTable.orderItems.Count == 0)
+        if (Table.CurrentTable == 0 || !SelectedTable.orderItems.Any())
         {
             ToastService.ShowToast(ToastLevel.Info, "Order is empty");
 
@@ -224,7 +224,10 @@ else
                 CurrentList1 = (List<OrderItem>)result.Data;
                 RoundedTotalPrice = 0;
                 SelectedTable.orderItems.Clear();
+                SelectedTables.Remove(SelectedTable);
                 SelectedTable = new Table();
+                Table.CurrentTable = 0;
+
 
 
             }

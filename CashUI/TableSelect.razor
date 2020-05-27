@@ -16,7 +16,7 @@
             {
                 if (table.status == Table.Status.Open)
                 {
-                    <button @onclick="(() => UpdateTable(table))" type="button" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">@table.Id </button>
+                    <button @onclick="(() => UpdateTable(table))" type="button" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">@table.TableNumber </button>
 
                 }
             }
@@ -27,7 +27,7 @@
             {
                 if (table.status == Table.Status.Taken)
                 {
-                    <button type="button" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">@table.Id </button>
+                    <button type="button" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">@table.TableNumber </button>
                 }
             }
         </div>
