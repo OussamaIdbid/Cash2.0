@@ -71,6 +71,7 @@ else
         operation.UserId = User.CurrentId;
         CurrentList1 = new List<OrderItem>();
         tables = await TableService.GetTables();
+        Table.CurrentTable = 0;
 
         foreach (var item in tables)
         {
