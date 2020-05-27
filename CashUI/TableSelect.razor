@@ -27,7 +27,7 @@
             {
                 if (table.status == Table.Status.Taken)
                 {
-                    <button @onclick="(() => UpdateTable(table))" type="button" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">@table.Id </button>
+                    <button type="button" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">@table.Id </button>
                 }
             }
         </div>
@@ -91,7 +91,7 @@
                 await TableService.EditTable(table.Id, table);
                 await OperationService.CreateOperation(operation);
                 Table.isTaken = false;
-                Table.CurrentTable = 0;
+                //Table.CurrentTable = 0;
             }
             else
             {
@@ -111,27 +111,27 @@
                     await TableService.EditTable(table.Id, table);
                     await OperationService.CreateOperation(operation);
                     Table.isTaken = false;
-                    Table.CurrentTable = 0;
+                    //Table.CurrentTable = 0;
                 }
             }
         }
         else
         {
-            if (amountOfTakenTables == 0)
-            {
+            //if (amountOfTakenTables == 0)
+            //{
                 operation.Description = User.CurrentUsername + "has registered table" + table.Id + "as taken";
 
                 table.status = Table.Status.Taken;
                 await OperationService.CreateOperation(operation);
                 await TableService.EditTable(table.Id, table);
                 Table.isTaken = true;
-                Table.CurrentTable = table.Id;
+                //Table.CurrentTable = table.Id;
 
-            }
-            else
-            {
-                Console.WriteLine("Önly one table can be opened at a time");
-            }
+            //}
+            //else
+            //{
+                //Console.WriteLine("Önly one table can be opened at a time");
+            //}
 
 
         }
@@ -156,6 +156,6 @@
 
         }
 
-        BlazoredModal.Close(ModalResult.Ok(IsTaken));
+        BlazoredModal.Close(ModalResult.Ok(SelectedTables));
     }
 }

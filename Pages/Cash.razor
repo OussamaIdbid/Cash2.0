@@ -4,6 +4,7 @@
 @inject IModalService ModalService
 @inject IOperationService OperationService
 @inject IToastService ToastService
+@inject ITableService TableService
 @page "/cash"
 
 @if (User.IsloggedIn == false)
@@ -20,7 +21,7 @@ else
 
         <div id='right' class='rounded col-md-3 bg-white'>
             <Checkout>
-                <OrderItems OnProductRemoved="ProductRemoved" OnPriceReduced="PriceReduced" OnPriceIncreased="PriceIncreased" orderItems="@CurrentList1"></OrderItems>
+                <OrderItems OnProductRemoved="ProductRemoved" OnPriceReduced="PriceReduced" OnPriceIncreased="PriceIncreased" orderItems="@SelectedTable.orderItems"></OrderItems>
             </Checkout>
             <div id='checkout-container' class="rounded">
                 <div id="price-container" class='text-muted'>
@@ -35,8 +36,16 @@ else
                 </div>
             </div>
         </div>
-
     </div>
+    <div class="d-flex flex-row">
+        @foreach (var item in SelectedTables)
+        {
+            <button type="button" @onclick="@(() => Activate(item))" class="btn btn-sm btn-primary shadow-sm checkout-button m-1">@item.Id </button>
+            <button type="button" @onclick="@(() => CloseTable(item))" class="btn btn-sm btn-primary shadow-sm checkout-button m-1"> Close table</button>
+
+        }
+    </div>
+
 
 
 }
@@ -45,9 +54,13 @@ else
 
 @code{
     Operation operation = new Operation();
+    IEnumerable<Table> tables;
     string Username = User.CurrentUsername;
     public List<OrderItem> CurrentList1 = new List<OrderItem>();
     public List<OrderItem> NewOrderlist = new List<OrderItem>();
+    public List<Table> SelectedTables = new List<Table>();
+    public Table SelectedTable = new Table();
+
     public double totalPrice;
     public double RoundedTotalPrice;
 
@@ -57,27 +70,85 @@ else
     {
         operation.UserId = User.CurrentId;
         CurrentList1 = new List<OrderItem>();
+        tables = await TableService.GetTables();
+
+        foreach (var item in tables)
+        {
+            item.status = Table.Status.Open;
+            await TableService.EditTable(item.Id, item);
+        }
+
     }
 
     [Parameter] public EventCallback<List<OrderItem>> OnList2Changed { get; set; }
 
+    public void Activate(Table table)
+    {
+        foreach (var item in SelectedTables)
+        {
+            item.active = false;
+        }
+        table.active = true;
+        Console.WriteLine(table.Id + " is active");
+        Table.CurrentTable = table.Id;
+        SelectedTable = table;
+        RoundedTotalPrice = 0;
+        totalPrice = 0;
+        Table.CurrentTable = table.Id;
+
+
+        if (SelectedTable.orderItems == null)
+        {
+            SelectedTable.orderItems = new List<OrderItem>();
+
+
+        }
+        else
+        {
+            foreach (var item in SelectedTable.orderItems)
+            {
+
+                totalPrice += item.TotalPrice;
+                Console.WriteLine(item.TotalPrice);
+                RoundedTotalPrice = Math.Round(totalPrice, 2);
+            }
+        }
+    }
+    public async Task CloseTable(Table table)
+    {
+        table.status = Table.Status.Open;
+        await TableService.EditTable(table.Id, table);
+        SelectedTables.Remove(table);
+        if (table.orderItems != null)
+        {
+            table.orderItems.Clear();
+        }
+        if(SelectedTable == table)
+        {
+            table.active = false;
+            SelectedTable = new Table();
+            Table.CurrentTable = 0;
+        }
+    }
     public async void List1Changed(OrderItem List)
     {
 
-        Console.WriteLine(List);
-        CurrentList1.Add(List);
+        Console.WriteLine(List.Product.Name);
+        //CurrentList1.Add(List);
+        SelectedTable.orderItems.Add(List);
         foreach (var item in CurrentList1)
         {
             Console.WriteLine(item.Product.Name);
         }
-        await OnList2Changed.InvokeAsync(CurrentList1);
+        await OnList2Changed.InvokeAsync(SelectedTable.orderItems);
         Product.TotalPrice = 0;
         totalPrice = 0;
-        for (int i = 0; i < CurrentList1.Count; i++)
+        foreach (var item in SelectedTable.orderItems)
         {
-            totalPrice += CurrentList1[i].TotalPrice;
+            totalPrice += item.TotalPrice;
             RoundedTotalPrice = Math.Round(totalPrice, 2);
         }
+
 
     }
 
@@ -94,7 +165,7 @@ else
     public async void ProductRemoved(OrderItem orderItems)
     {
 
-        CurrentList1.Remove(orderItems);
+        SelectedTable.orderItems.Remove(orderItems);
     }
 
 
@@ -115,14 +186,18 @@ else
         var result = await TableModal.Result;
 
 
-        if((bool)result.Data == false)
+        if (result.Cancelled)
         {
-            CurrentList1.Clear();
+            Console.WriteLine("damn");
+        }
+        else
+        {
+            SelectedTables = (List<Table>)result.Data;
         }
     }
     public async Task Checkout()
     {
-        if (CurrentList1.Count == 0)
+        if (SelectedTable.orderItems.Count == 0)
         {
             ToastService.ShowToast(ToastLevel.Info, "Order is empty");
 
@@ -131,7 +206,7 @@ else
         {
 
             var parameters = new ModalParameters();
-            parameters.Add(nameof(CheckoutModal.orderItems), CurrentList1);
+            parameters.Add(nameof(CheckoutModal.orderItems), SelectedTable.orderItems);
             var checkoutModal = ModalService.Show<CheckoutModal>("Checkout", parameters);
 
             var result = await checkoutModal.Result;
@@ -146,6 +221,8 @@ else
 
                 CurrentList1 = (List<OrderItem>)result.Data;
                 RoundedTotalPrice = 0;
+                SelectedTable.orderItems.Clear();
+                SelectedTable = new Table();
 
 
             }

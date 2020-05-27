@@ -64,17 +64,17 @@
     public async Task showName(Product product)
     {
         IEnumerable<Table> tables = await TableService.GetTables();
-        foreach (var item in tables)
+        /*foreach (var item in tables)
         {
             if (item.status == Table.Status.Taken)
             {
                 Table.isTaken = true;
                 Table.CurrentTable = item.Id;
             }
-        }
+        }*/
 
 
-        if (Table.isTaken == true)
+        if (Table.CurrentTable != 0)
         {
 
 

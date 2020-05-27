@@ -46,7 +46,7 @@
         @code {
 
             [Parameter]
-            public List<OrderItem> orderItems { get; set; }
+            public List<OrderItem> orderItems { get; set; } = new List<OrderItem>();
             Operation operation = new Operation();
             string visibility = "visible";
 
@@ -107,7 +107,6 @@
                     OnPriceIncreased.InvokeAsync(orderItem.Product.Price);
                     //OnProductRemoved.InvokeAsync(orderItem);
                 }
-
             }
             public void ShowOptions(OrderItem orderitem)
             {
@@ -118,20 +117,34 @@
             protected override async Task OnParametersSetAsync()
             {
 
-                Console.WriteLine(orderItems.Count());
-
-                operation.UserId = User.CurrentId;
-                foreach (var item in orderItems)
+                //Console.WriteLine(orderItems.Count());
+                if(orderItems != null)
                 {
-                    if (item.Quantity == 1)
+                    operation.UserId = User.CurrentId;
+                    foreach (var item in orderItems)
                     {
-                        item.MinusBtnVisibility = "visible";
+                        if (item.Quantity == 1)
+                        {
+                            item.MinusBtnVisibility = "visible";
+                        }
+                        else
+                        {
+                            item.MinusBtnVisibility = "visible";
+                        }
                     }
-                    else
+                    foreach (var item in orderItems)
                     {
-                        item.MinusBtnVisibility = "visible";
+                        item.TotalPrice = Math.Round(item.TotalPrice, 2);
+
                     }
+
                 }
+
+
+
+
+
+
 
 
 
