@@ -147,7 +147,29 @@ else
             operation.UserId = User.CurrentId;
             operation.Description = User.CurrentUsername + " has deleted " + product.Name + " from database";
             Pager pager = new Pager(page);
+
             products = await ProductService.GetPagedProducts(pager);
+            Console.WriteLine(page);
+            Console.WriteLine(products.Count());
+
+            if (products.Count() == 0)
+            {
+
+
+                Console.WriteLine("this page is empty");
+                page--;
+                Pager pager2 = new Pager(page);
+                products = await ProductService.GetPagedProducts(pager2);
+
+                if (page == 1)
+                {
+                    PreviousBtnVisibility = "hidden";
+                    NextBtnVisibility = "hidden";
+
+                }
+
+            }
+
             ToastService.ShowToast(ToastLevel.Info, "Deleted " + product.Name + "from database");
 
             await OperationService.CreateOperation(operation);
@@ -196,6 +218,16 @@ else
             operation.Description = User.CurrentUsername + " has added a product";
             Pager pager = new Pager(page);
             products = await ProductService.GetPagedProducts(pager);
+
+            Pager pagerNext = new Pager((page + 1));
+            IEnumerable<Product> NextPageProducts = await ProductService.GetPagedProducts(pagerNext);
+
+            if (NextPageProducts.Any())
+            {
+                NextBtnVisibility = "visible";
+
+            }
+
             ToastService.ShowToast(ToastLevel.Info, "Product added");
 
             await OperationService.CreateOperation(operation);
