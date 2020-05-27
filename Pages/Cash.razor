@@ -13,7 +13,14 @@
 }
 else
 {
+    <div class="d-flex flex-row">
+        @foreach (var item in SelectedTables)
+        {
+            <button type="button" @onclick="@(() => Activate(item))" class="btn btn btn-primary shadow-sm checkout-button m-1">@item.Id </button>
+            <button type="button" @onclick="@(() => CloseTable(item))" class="btn btn btn-primary shadow-sm checkout-button m-1"> Close table</button>
 
+        }
+    </div>
     <div class="row" id="cash-container">
         <div id='left' class='rounded col-md-8'>
             <LeftContainer OnList1Changed="List1Changed"></LeftContainer>
@@ -37,14 +44,7 @@ else
             </div>
         </div>
     </div>
-    <div class="d-flex flex-row">
-        @foreach (var item in SelectedTables)
-        {
-            <button type="button" @onclick="@(() => Activate(item))" class="btn btn-sm btn-primary shadow-sm checkout-button m-1">@item.Id </button>
-            <button type="button" @onclick="@(() => CloseTable(item))" class="btn btn-sm btn-primary shadow-sm checkout-button m-1"> Close table</button>
 
-        }
-    </div>
 
 
 
@@ -96,6 +96,7 @@ else
         RoundedTotalPrice = 0;
         totalPrice = 0;
         Table.CurrentTable = table.Id;
+        ToastService.ShowToast(ToastLevel.Info, "Table " + table.Id + " is selected");
 
 
         if (SelectedTable.orderItems == null)
@@ -124,7 +125,7 @@ else
         {
             table.orderItems.Clear();
         }
-        if(SelectedTable == table)
+        if (SelectedTable == table)
         {
             table.active = false;
             SelectedTable = new Table();
