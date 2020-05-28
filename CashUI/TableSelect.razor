@@ -86,7 +86,7 @@
 
             if (orderIsEmpty)
             {
-                operation.Description = User.CurrentUsername + "has registered table" + table.Id + "as open";
+                operation.Description = User.CurrentUsername + "has registered table" + table.TableNumber + "as open";
                 table.status = Table.Status.Open;
                 await TableService.EditTable(table.Id, table);
                 await OperationService.CreateOperation(operation);
@@ -106,7 +106,7 @@
                 else
                 {
 
-                    operation.Description = User.CurrentUsername + "has registered table" + table.Id + "as open";
+                    operation.Description = User.CurrentUsername + "has registered table" + table.TableNumber + "as open";
                     table.status = Table.Status.Open;
                     await TableService.EditTable(table.Id, table);
                     await OperationService.CreateOperation(operation);
@@ -119,7 +119,7 @@
         {
             //if (amountOfTakenTables == 0)
             //{
-                operation.Description = User.CurrentUsername + "has registered table" + table.Id + "as taken";
+                operation.Description = User.CurrentUsername + "has registered table" + table.TableNumber + "as taken";
 
                 table.status = Table.Status.Taken;
                 await OperationService.CreateOperation(operation);

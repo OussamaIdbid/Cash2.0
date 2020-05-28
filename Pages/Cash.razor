@@ -16,7 +16,7 @@ else
     <div class="d-flex flex-row">
         @foreach (var item in SelectedTables)
         {
-            <button type="button" @onclick="@(() => Activate(item))" class="btn btn btn-primary shadow-sm checkout-button m-1">@item.TableNumber </button>
+            <button type="button" @onclick="@(() => Activate(item))" class="btn btn btn-primary shadow-sm checkout-button m-1">Table: @item.TableNumber </button>
             <button type="button" @onclick="@(() => CloseTable(item))" class="btn btn btn-primary shadow-sm checkout-button m-1"> Close table</button>
 
         }
@@ -96,7 +96,7 @@ else
         RoundedTotalPrice = 0;
         totalPrice = 0;
         Table.CurrentTable = table.Id;
-        ToastService.ShowToast(ToastLevel.Info, "Table " + table.Id + " is selected");
+        ToastService.ShowToast(ToastLevel.Info, "Table " + table.TableNumber + " is selected");
 
 
         if (SelectedTable.orderItems == null)

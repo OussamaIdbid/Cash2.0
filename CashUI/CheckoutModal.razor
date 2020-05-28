@@ -19,13 +19,13 @@
             @foreach (var item1 in orderItems)
             {
 
-            <tr>
-                <td>@item1.Product.Name</td>
-                <td>€@item1.Product.Price</td>
-                <td>@item1.Quantity</td>
-                <td>€@item1.TotalPrice</td>
-                <td class="order-line" @onclick="(() => ShowOptions(item1))">options</td>
-            </tr>
+                <tr>
+                    <td>@item1.Product.Name</td>
+                    <td>€@item1.Product.Price</td>
+                    <td>@item1.Quantity</td>
+                    <td>€@item1.TotalPrice</td>
+                    <td class="order-line" @onclick="(() => ShowOptions(item1))">options</td>
+                </tr>
             }
         </tbody>
     </table>
@@ -110,7 +110,7 @@
             if (item.Options.Any())
             {
 
-                foreach(var item1 in item.Options)
+                foreach (var item1 in item.Options)
                 {
                     OptionOrderline optionOrderline = new OptionOrderline();
                     optionOrderline.OptionId = item1.Id;
@@ -128,7 +128,7 @@
         IEnumerable<Table> tables = await TableService.GetTables();
         foreach (var item in tables)
         {
-            if(item.Id == Table.CurrentTable)
+            if (item.Id == Table.CurrentTable)
             {
                 item.status = Table.Status.Open;
                 await TableService.EditTable(item.Id, item);
