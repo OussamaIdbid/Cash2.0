@@ -118,19 +118,33 @@ else
     }
     public async Task CloseTable(Table table)
     {
-        table.status = Table.Status.Open;
-        await TableService.EditTable(table.Id, table);
-        SelectedTables.Remove(table);
-        if (table.orderItems != null)
+
+
+        var ConfirmationModal = ModalService.Show<TableConfirmation>("Weet je zeker dat je de tafel vrij wilt maken?");
+        var result = await ConfirmationModal.Result;
+
+        if (result.Cancelled)
         {
-            table.orderItems.Clear();
+            ToastService.ShowToast(ToastLevel.Info, "Action cancelled");
         }
-        if (SelectedTable == table)
+        else
         {
-            table.active = false;
-            SelectedTable = new Table();
-            Table.CurrentTable = 0;
+            table.status = Table.Status.Open;
+            await TableService.EditTable(table.Id, table);
+            SelectedTables.Remove(table);
+            if (table.orderItems != null)
+            {
+                table.orderItems.Clear();
+            }
+            if (SelectedTable == table)
+            {
+                table.active = false;
+                SelectedTable = new Table();
+                Table.CurrentTable = 0;
+            }
         }
+
+
     }
     public async void List1Changed(OrderItem List)
     {
@@ -194,7 +208,39 @@ else
         }
         else
         {
-            SelectedTables = (List<Table>)result.Data;
+
+            List<Table> AsyncTables = (List<Table>)result.Data;
+
+            foreach (var item in AsyncTables)
+            {
+                item.orderItems = new List<OrderItem>();
+            }
+
+            if (!SelectedTables.Any())
+            {
+                foreach (var item in (List<Table>)result.Data)
+                {
+                    SelectedTables.Add(item);
+                }
+            }
+            else
+            {
+                foreach(var item in (List< Table>)result.Data)
+                {
+
+                    if (SelectedTables.Exists(x => x.Id == item.Id))
+                    {
+                        Console.WriteLine("duplicate");
+                    }
+                    else
+                    {
+                        SelectedTables.Add(item);
+                    }
+                }
+
+
+            }
+            //SelectedTables = (List<Table>)result.Data;
         }
     }
     public async Task Checkout()
