@@ -16,6 +16,7 @@ using Blazored.Toast;
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
+using Blazored.LocalStorage;
 
 namespace WebAppCash
 {
@@ -60,6 +61,8 @@ namespace WebAppCash
             services.AddSingleton(sqlConnectionConfiguration);
             services.AddBlazoredModal();
             services.AddBlazoredToast();
+            services.AddBlazoredLocalStorage(config =>
+            config.JsonSerializerOptions.WriteIndented = true);
         }   
 
 
