@@ -12,7 +12,7 @@ namespace CashModel
         Task<bool> CreateOption(Option option);
         Task<bool> EditOption(int Id, Option option);
         Task<bool> DeleteOption(int Id);
-        //Task<IEnumerable<Product>> GetProductsByCategory(int categoryId);
+        Task<IEnumerable<Option>> OptionsByProduct(int Id);
         Task<Option> SingleOption(int Id);
 
     }

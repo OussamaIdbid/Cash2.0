@@ -138,5 +138,33 @@ namespace CashModel
             }
             return option;
         }
+        public async Task<IEnumerable<Option>> OptionsByProduct(int Id)
+        {
+            IEnumerable<Option> options;
+
+            using (var conn = new SqlConnection(_configuration.Value))
+            {
+                const string query = @"select * from dbo.[Option] where ProductId = @Id";
+
+                if (conn.State == ConnectionState.Closed)
+                    conn.Open();
+                try
+                {
+                    options = await conn.QueryAsync<Option>(query, new {Id }, commandType: CommandType.Text);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+                }
+            }
+            return options;
+        }
+
+
     }
 }

@@ -84,9 +84,9 @@ namespace CashModel
             return true;
         }*/
 
-        public async Task<IEnumerable<Option>> GetOptions()
+        public async Task<IEnumerable<OptionOrderline>> GetOrderlineOptions()
         {
-            IEnumerable<Option> options;
+            IEnumerable<OptionOrderline> options;
             using (var conn = new SqlConnection(_configuration.Value))
             {
                 const string query = @"select * from cash.dbo.[Option]";
@@ -95,7 +95,7 @@ namespace CashModel
                     conn.Open();
                 try
                 {
-                    options = await conn.QueryAsync<Option>(query);
+                    options = await conn.QueryAsync<OptionOrderline>(query);
 
                 }
                 catch (Exception ex)

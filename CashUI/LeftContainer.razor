@@ -8,7 +8,7 @@
     </div>
 
     @code {
-        public int SelectedId = 0;
+        public int SelectedId = 1;
         public OrderItem CurrentList = new OrderItem();
         public IEnumerable<Product> Products;
         [Parameter] public EventCallback<OrderItem> OnList1Changed { get; set; }
