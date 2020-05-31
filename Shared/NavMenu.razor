@@ -2,6 +2,7 @@
 @inject NavigationManager NavigationManager
 @inject IOperationService OperationService
 @inject IToastService ToastService
+@inject IModalService ModalService
 <div>
     <ul class="nav flex-column">
         <li class="nav-item px-3">
@@ -15,6 +16,13 @@
             <div class="nav-link" @onclick="(() => ToConfig())">
                 <span class="material-icons">
                     settings
+                </span>
+            </div>
+        </li>
+        <li class="nav-item px-3">
+            <div class="nav-link" @onclick="(() => ToOperation())">
+                <span class="material-icons">
+                    computer
                 </span>
             </div>
         </li>
@@ -36,23 +44,72 @@
     }
     public async Task ToConfig()
     {
-        Operation operation = new Operation();
-        operation.UserId = User.CurrentId;
-        operation.Description = User.CurrentUsername + " clicked on the configuration page";
-        await OperationService.CreateOperation(operation);
+        var parameters = new ModalParameters();
+        var ConfirmModal = ModalService.Show<LoginConfirm>("");
+        var result = await ConfirmModal.Result;
 
-        NavigationManager.NavigateTo("/configuration");
+        if (result.Cancelled)
+        {
+            ToastService.ShowToast(ToastLevel.Info, "Action cancelled");
+        }
+        else
+        {
+            Operation operation = new Operation();
+            operation.UserId = User.CurrentId;
+            operation.Description = User.CurrentUsername + " clicked on the configuration page";
+            await OperationService.CreateOperation(operation);
+            NavigationManager.NavigateTo("/configuration");
+        }
+
+
+
     }
     public async Task Logout()
     {
-        Operation operation = new Operation();
-        operation.Description = User.CurrentUsername + " has logged out";
-        operation.UserId = User.CurrentId;
 
-        User.IsloggedIn = false;
-        NavigationManager.NavigateTo("/");
-        ToastService.ShowToast(ToastLevel.Success, "Logged out");
-        await OperationService.CreateOperation(operation);
+        var parameters = new ModalParameters();
+        var logoutModal = ModalService.Show<LogoutConfirmation>("");
+        var result = await logoutModal.Result;
+
+        if (result.Cancelled)
+        {
+            ToastService.ShowToast(ToastLevel.Info, "Action cancelled");
+        }
+        else
+        {
+            Operation operation = new Operation();
+            operation.Description = User.CurrentUsername + " has logged out";
+            operation.UserId = User.CurrentId;
+
+            User.IsloggedIn = false;
+            NavigationManager.NavigateTo("/");
+            ToastService.ShowToast(ToastLevel.Success, "Logged out");
+            await OperationService.CreateOperation(operation);
+        }
+
     }
+    public async Task ToOperation()
+    {
+
+        var parameters = new ModalParameters();
+        var ConfirmModal = ModalService.Show<LoginConfirm>("");
+        var result = await ConfirmModal.Result;
+
+        if (result.Cancelled)
+        {
+            ToastService.ShowToast(ToastLevel.Info, "Action cancelled");
+        }
+        else
+        {
+            Operation operation = new Operation();
+            operation.Description = User.CurrentUsername + " has clicked on operation page";
+            operation.UserId = User.CurrentId;
+
+            NavigationManager.NavigateTo("/operations");
+            await OperationService.CreateOperation(operation);
+        }
+
+    }
+
 }
 

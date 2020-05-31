@@ -111,6 +111,36 @@ namespace CashModel
             }
             return operations;
         }
+        public async Task<IEnumerable<Operation>> GetPagedOperations(Pager pager)
+        {
+            IEnumerable<Operation> operations;
+            using (var conn = new SqlConnection(_configuration.Value))
+            {
+
+                var query = @"SELECT * FROM cash.dbo.[Operation] order by Id OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
+
+
+                if (conn.State == ConnectionState.Closed)
+                    conn.Open();
+                try
+                {
+                    operations = await conn.QueryAsync<Operation>(query, pager);
+
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+                }
+
+            }
+            return operations;
+
+        }
 
         /*public async Task<Category> SingleCategory(int CategoryId)
         {

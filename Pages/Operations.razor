@@ -1,0 +1,135 @@
+﻿@using CashModel
+@using CashUI
+@inject IOperationService OperationService
+@inject IUserService UserService
+
+@page "/operations"
+
+@if (!User.IsloggedIn)
+{
+
+    <p>User not logged in</p>
+}
+else
+{
+<div height="300px" class="container">
+
+    <table class="table bg-white m-3 shadow-sm ">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Description</th>
+                <th scope="col">User</th>
+                <th scope="col">Date</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in operations)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Description</td>
+                    <td>@users.FirstOrDefault(x => x.Id == item.UserId).Username</td>
+                    <td>@item.datetime</td>
+
+                </tr>
+            }
+
+        </tbody>
+
+
+    </table>
+    <div class="d-flex">
+        <button class="btn btn-sm btn-primary shadow-sm checkout-button m-1 align-self-start" style="visibility:@PreviousBtnVisibility;" @onclick="(() => PreviousPage())">Previous page</button>
+        <button class="btn btn-sm btn-primary shadow-sm checkout-button m-1 align-self-end" style="visibility:@NextBtnVisibility;" @onclick="(() => NextPage())">Next page</button>
+    </div>
+</div>
+
+}
+
+@code {
+
+    IEnumerable<Operation> operations = new List<Operation>();
+    IEnumerable<User> users;
+
+    int page = 1;
+    string NextBtnVisibility;
+    string PreviousBtnVisibility;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Pager pager = new Pager(page,100);
+
+
+        operations = await OperationService.GetPagedOperations(pager);
+        users = await UserService.GetUsers();
+
+        Pager pagerNext = new Pager((page + 1), 100);
+
+        IEnumerable<Operation> NextPageOperations = await OperationService.GetPagedOperations(pagerNext);
+
+        if (operations.Count() <= 100 && !NextPageOperations.Any())
+        {
+            NextBtnVisibility = "hidden";
+            PreviousBtnVisibility = "hidden";
+        }
+        else if (NextPageOperations.Any())
+        {
+            NextBtnVisibility = "visible";
+            PreviousBtnVisibility = "hidden";
+        }
+        else
+        {
+            NextBtnVisibility = "visible";
+            PreviousBtnVisibility = "hidden";
+        }
+
+    }
+
+    public async Task NextPage()
+    {
+        page++;
+        Pager pager = new Pager(page, 100);
+
+        operations = await OperationService.GetPagedOperations(pager);
+        /*foreach (var item in products)
+        {
+            Console.WriteLine(item.Id);
+        }*/
+        Pager pagerNext = new Pager((page + 1), 100);
+
+        IEnumerable<Operation> NextPageOperations = await OperationService.GetPagedOperations(pagerNext);
+
+        if (page > 1)
+        {
+            PreviousBtnVisibility = "visible";
+        }
+        if (!NextPageOperations.Any())
+        {
+            NextBtnVisibility = "hidden";
+        }
+
+
+
+    }
+    public async Task PreviousPage()
+    {
+        page--;
+        Pager pager = new Pager(page, 100);
+
+        operations = await OperationService.GetPagedOperations(pager);
+        /*foreach (var item in products)
+        {
+            Console.WriteLine(item.Id);
+        }*/
+        if (page == 1)
+        {
+            PreviousBtnVisibility = "hidden";
+        }
+
+        NextBtnVisibility = "visible";
+
+
+    }
+}

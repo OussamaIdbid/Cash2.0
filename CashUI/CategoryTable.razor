@@ -54,11 +54,11 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-        Pager pager = new Pager(page);
+        Pager pager = new Pager(page,10);
 
         categories = await CategoryService.GetPagedCategories(pager);
 
-        Pager pagerNext = new Pager((page + 1));
+        Pager pagerNext = new Pager((page + 1),10);
 
         IEnumerable<Category> NextPageCategory = await CategoryService.GetPagedCategories(pagerNext);
 
@@ -82,13 +82,13 @@ else
     public async Task NextPage()
     {
         page++;
-        Pager pager = new Pager(page);
+        Pager pager = new Pager(page, 10);
         categories = await CategoryService.GetPagedCategories(pager);
         /*foreach (var item in products)
         {
             Console.WriteLine(item.Id);
         }*/
-        Pager pagerNext = new Pager((page + 1));
+        Pager pagerNext = new Pager((page + 1), 10);
         IEnumerable<Category> NextPageCategories = await CategoryService.GetPagedCategories(pagerNext);
 
         if (page > 1)
@@ -106,7 +106,7 @@ else
     public async Task PreviousPage()
     {
         page--;
-        Pager pager = new Pager(page);
+        Pager pager = new Pager(page, 10);
         categories = await CategoryService.GetPagedCategories(pager);
         /*foreach (var item in products)
         {
@@ -138,7 +138,7 @@ else
             Operation operation = new Operation();
             operation.UserId = User.CurrentId;
             operation.Description = User.CurrentUsername + " has deleted " + category.CategoryName + " from database";
-            Pager pager = new Pager(page);
+            Pager pager = new Pager(page, 10);
 
             categories = await CategoryService.GetPagedCategories(pager);
             Console.WriteLine(page);
@@ -150,7 +150,7 @@ else
 
                 Console.WriteLine("this page is empty");
                 page--;
-                Pager pager2 = new Pager(page);
+                Pager pager2 = new Pager(page, 10);
                 categories = await CategoryService.GetPagedCategories(pager2);
 
                 if (page == 1)
@@ -186,7 +186,7 @@ else
             Operation operation = new Operation();
             operation.UserId = User.CurrentId;
             operation.Description = User.CurrentUsername + " has edited " + category.CategoryName + " in database";
-            Pager pager = new Pager(page);
+            Pager pager = new Pager(page, 10);
             categories = await CategoryService.GetPagedCategories(pager);
             ToastService.ShowToast(ToastLevel.Info, "Edited " + category.CategoryName + " in database");
 
@@ -208,10 +208,10 @@ else
             Operation operation = new Operation();
             operation.UserId = User.CurrentId;
             operation.Description = User.CurrentUsername + " has added a product";
-            Pager pager = new Pager(page);
+            Pager pager = new Pager(page, 10);
             categories = await CategoryService.GetPagedCategories(pager);
 
-            Pager pagerNext = new Pager((page + 1));
+            Pager pagerNext = new Pager((page + 1), 10);
             IEnumerable<Category> NextPageCategories = await CategoryService.GetPagedCategories(pagerNext);
 
             if (NextPageCategories.Any())

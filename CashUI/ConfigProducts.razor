@@ -114,6 +114,12 @@
             Console.WriteLine(product1.Name + " is being swapped with " + product2.Name);
 
             products = await ProductService.GetProductsByCategory(Id);
+            foreach (var item in products)
+            {
+                category = await CategoryService.SingleCategory(item.CategoryId);
+
+                item.Color = category.Color;
+            }
 
 
         }
@@ -122,4 +128,5 @@
 
 
     }
+
 }
