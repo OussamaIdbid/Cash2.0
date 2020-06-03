@@ -32,7 +32,9 @@
 </div>
 <p>Totaal: €@TotalPrice</p>
 
-<button class="btn  btn-primary shadow-sm checkout-button m-1" @onclick="(() => Checkout())">Submit</button>
+<button class="btn  btn-primary shadow-sm checkout-button m-1" @onclick="(() => PinCheckout())">Pin</button>
+<button class="btn  btn-primary shadow-sm checkout-button m-1" @onclick="(() => CashCheckout())">Cash</button>
+
 
 @code {
 
@@ -75,7 +77,7 @@
         else
         {
             LatestOrderItemId = orderItems1.Last().Id + 1;
-            Console.WriteLine(LatestOrderItemId);
+            //Console.WriteLine(LatestOrderItemId);
         }
 
 
@@ -87,10 +89,68 @@
         parameters.Add(nameof(OrderlineOptions.options), orderitem.Options);
         var optionsModal = ModalService.Show<OrderlineOptions>("Selected Options", parameters);
     }
-    public async Task Checkout()
+    public async Task PinCheckout()
     {
         Order order = new Order();
         order.TableId = Table.CurrentTable;
+        order.paymentMethod = Order.PaymentMethod.Pin;
+        foreach (var item in orderItems)
+        {
+            order.TotalPrice += item.TotalPrice;
+        }
+        await OrderService.CreateOrder(order);
+
+
+        foreach (var item in orderItems)
+        {
+            item.OrderId = LatestOrderId;
+            item.ProductId = item.Product.Id;
+
+            await OrderitemService.CreateOrderitem(item);
+        }
+        foreach (var item in orderItems)
+        {
+            if (item.Options.Any())
+            {
+
+                foreach (var item1 in item.Options)
+                {
+                    OptionOrderline optionOrderline = new OptionOrderline();
+                    optionOrderline.OptionId = item1.Id;
+                    optionOrderline.OrderlineId = LatestOrderItemId;
+                    await OptionOrderlineService.CreateOptionOrderline(optionOrderline);
+
+
+                }
+
+            }
+            LatestOrderItemId++;
+        }
+
+        IEnumerable<Table> tables = await TableService.GetTables();
+        foreach (var item in tables)
+        {
+            if (item.Id == Table.CurrentTable)
+            {
+                item.status = Table.Status.Open;
+                await TableService.EditTable(item.Id, item);
+            }
+        }
+        Table.isTaken = false;
+
+        operation.UserId = User.CurrentId;
+        operation.Description = User.CurrentUsername + " has checked out order #" + LatestOrderId;
+        await OperationService.CreateOperation(operation);
+        orderItems.Clear();
+        BlazoredModal.Close(ModalResult.Ok(orderItems));
+        ToastService.ShowToast(ToastLevel.Success, "Order complete with pin");
+
+    }
+    public async Task CashCheckout()
+    {
+        Order order = new Order();
+        order.TableId = Table.CurrentTable;
+        order.paymentMethod = Order.PaymentMethod.Cash;
         foreach (var item in orderItems)
         {
             order.TotalPrice += item.TotalPrice;
@@ -141,7 +201,7 @@
         await OperationService.CreateOperation(operation);
         orderItems.Clear();
         BlazoredModal.Close(ModalResult.Ok(orderItems));
-        ToastService.ShowToast(ToastLevel.Success, "Order complete");
+        ToastService.ShowToast(ToastLevel.Success, "Order complete with cash");
 
     }
 }

@@ -43,11 +43,17 @@
             OnIdChanged.InvokeAsync(value.CategoryId);
         }
     }*/
-    public int GetCategoryId(Category category)
+    Operation operation = new Operation();
+
+    public async Task GetCategoryId(Category category)
     {
         Console.Write(category.CategoryId);
         OnIdChanged.InvokeAsync(category.CategoryId);
-        return category.CategoryId;
+        operation.UserId = User.CurrentId;
+        operation.Description = User.CurrentUsername + " has clicked on " + category.CategoryName;
+
+        await OperationService.CreateOperation(operation);
+        //return category.CategoryId;
     }
     public IEnumerable<Category> categories;
     [Parameter] public EventCallback<int> OnIdChanged { get; set; }
