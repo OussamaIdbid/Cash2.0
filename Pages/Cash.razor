@@ -14,7 +14,7 @@
 }
 else
 {
-    <div class="d-flex flex-row">
+    <div id="selectedtables-container" class="d-flex flex-row">
         @if (SelectedTables == null)
         {
 
@@ -23,8 +23,8 @@ else
         {
             @foreach (var item in SelectedTables)
             {
-                <button type="button" @onclick="@(() => Activate(item))" class="btn btn btn-primary shadow-sm checkout-button m-1">Table: @item.TableNumber </button>
-                <button type="button" @onclick="@(() => CloseTable(item))" class="btn btn btn-primary shadow-sm checkout-button m-1"> Close table</button>
+                <button type="button" @onclick="@(() => Activate(item))" class="btn btn btn-primary shadow-sm checkout-button m-1 table-item">Table: @item.TableNumber </button>
+                <button type="button" @onclick="@(() => CloseTable(item))" class="btn btn btn-primary shadow-sm checkout-button m-1 table-item"> Close table</button>
 
             }
         }
@@ -46,8 +46,8 @@ else
                     <p id='total'>Total €@RoundedTotalPrice</p>
                 </div>
                 <div id="checkout-buttons-container" class="">
-                    <button type="button" @onclick="(() => Checkout())" id="checkout-button" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1 ">Checkout</button>
-                    <button type="button" @onclick="@(() => TableSelect())" id="tableselect-button" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Tables </button>
+                    <button type="button" @onclick="(() => Checkout())" id="checkout-button" class="btn btn-lg  btn-primary shadow-sm right-button m-1 ">Checkout</button>
+                    <button type="button" @onclick="@(() => TableSelect())" id="tableselect-button" class="btn btn-lg  btn-primary shadow-sm right-button m-1">Tables </button>
 
                 </div>
             </div>

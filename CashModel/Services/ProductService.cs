@@ -171,6 +171,35 @@ namespace CashModel
             return products;
 
         }
+        public async Task<IEnumerable<Product>> SearchProductsByCategory(int categoryId, string Name)
+        {
+            
+            IEnumerable<Product> products;
+            using (var conn = new SqlConnection(_configuration.Value))
+            {
+                const string query = @"select * from cash.dbo.Product where CategoryId = @CategoryId and Name LIKE '%' + @Name + '%' ";
+
+                if (conn.State == ConnectionState.Closed)
+                    conn.Open();
+                try
+                {
+                    products = await conn.QueryAsync<Product>(query, new { categoryId, Name }, commandType: CommandType.Text);
+
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+                }
+
+            }
+            return products;
+
+        }
         public async Task<Product> SingleProduct(int id)
         {
             Product product = new Product();

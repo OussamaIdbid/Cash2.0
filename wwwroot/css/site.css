@@ -286,19 +286,25 @@ body {
 
 .checkout-button {
     border-color: #455775 !important;
+    background-color: transparent !important;
+    color: #455775 !important;
+    border-radius: 0;
+    margin: 3px !important;
+}
+.right-button {
+    border-color: #455775 !important;
     background-color: #455775 !important;
     color: white !important;
     border-radius: 0;
-    margin:0 !important;
+    margin: 0 !important;
 }
-
-/*.checkout-button:hover, .checkout-button:active, .checkout-button:focus {
+.checkout-button:hover, .checkout-button:active, .checkout-button:focus {
         background-color: #455775 !important;
         border-color: #455775 !important;
         color: white !important;
         outline: none !important;
         box-shadow: none !important;
-    }*/
+    }
 
 .btn:focus, .btn:active {
     outline: none !important;
@@ -449,4 +455,24 @@ td{
 #tableselect-button {
     width: 50% !important;
     margin-left: 1px !important;
+}
+#left-product{
+    height:100%;
+}
+#search-input{
+    width:90%;
+    margin: 0 !important;
+}
+.search-container{
+    width:100%;
+}
+#clear-search{
+    vertical-align:sub;
+    cursor: pointer;
+}
+#selectedtables-container{
+    margin-left:2.2rem;
+}
+.table-item{
+    margin: 3px;
 }
