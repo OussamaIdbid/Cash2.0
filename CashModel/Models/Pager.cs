@@ -12,10 +12,10 @@ namespace CashModel
         public int Offset { get; set; }
         public int Next { get; set; }
 
-        public Pager(int page, int pageSize = 10)
+        public Pager(int page, int pageSize)
         {
             Page = page < 1 ? 1 : page;
-            PageSize = pageSize < 1 ? 10 : pageSize;
+            PageSize = pageSize < 1 ? pageSize : pageSize;
 
             Next = pageSize;
             Offset = (Page - 1) * Next;

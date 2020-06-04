@@ -12,6 +12,9 @@ namespace CashModel
         Task<IEnumerable<Product>> GetPagedProducts(Pager pager);
 
         Task<IEnumerable<Product>> GetProductsByCategory(int categoryId);
+        Task<IEnumerable<Product>> SearchProductsByCategory(int categoryId, string Name);
+
+
         Task<Product> SingleProduct(int id);
         Task<bool> DeleteProduct(int id);
     }

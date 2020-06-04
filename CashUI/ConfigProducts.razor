@@ -1,6 +1,9 @@
 ﻿@inject IProductService ProductService
+@inject ICategoryService CategoryService
+
 @inject IToastService ToastService
 @inject IOperationService OperationService
+@inject IOptionService OptionService
 
 
 <div class="">
@@ -16,7 +19,7 @@
             @foreach (var product in products)
             {
 
-                <p class="product-button shadow" @onclick="(() => SwapProducts(product))">
+                <p class="product-button rounded shadow-sm" style="background-color:@product.Color; color:@product.textColor;" @onclick="(() => SwapProducts(product))">
                     @product.Name
                 </p>
 
@@ -37,7 +40,10 @@
 
     //public event Action OnChange;
 
+
     IEnumerable<Product> products;
+    Category category;
+
     [Parameter] public EventCallback<List<Product>> OnListChanged { get; set; }
 
 
@@ -45,6 +51,13 @@
     {
 
         products = await ProductService.GetProductsByCategory(Id);
+
+        foreach (var item in products)
+        {
+            category = await CategoryService.SingleCategory(item.CategoryId);
+
+            item.Color = category.Color;
+        }
 
     }
 
@@ -57,21 +70,56 @@
             product1 = product;
             amountClicked++;
             Console.WriteLine(product1.Name + " Selected");
+            ToastService.ShowToast(ToastLevel.Info, product1.Name + " Selected");
 
 
         }
         else if (amountClicked == 1)
         {
+
+            IEnumerable<Option> option1;
+            IEnumerable<Option> option2;
+
+
+
             product2 = product;
+
+            option1 = await OptionService.OptionsByProduct(product1.Id);
+            option2 = await OptionService.OptionsByProduct(product2.Id);
 
             await ProductService.EditProduct(product1.Id, product2);
             await ProductService.EditProduct(product2.Id, product1);
+
+            if (option1.Any())
+            {
+                foreach (var item in option1)
+                {
+                    item.ProductId = product2.Id;
+                    await OptionService.EditOption(item.Id, item);
+                }
+            }
+
+            if (option2.Any())
+            {
+                foreach (var item in option2)
+                {
+                    item.ProductId = product1.Id;
+                    await OptionService.EditOption(item.Id, item);
+                }
+            }
+
             amountClicked = 0;
 
             ToastService.ShowToast(ToastLevel.Info, product1.Name + " is being swapped with " + product2.Name);
             Console.WriteLine(product1.Name + " is being swapped with " + product2.Name);
 
             products = await ProductService.GetProductsByCategory(Id);
+            foreach (var item in products)
+            {
+                category = await CategoryService.SingleCategory(item.CategoryId);
+
+                item.Color = category.Color;
+            }
 
 
         }
@@ -80,4 +128,5 @@
 
 
     }
+
 }

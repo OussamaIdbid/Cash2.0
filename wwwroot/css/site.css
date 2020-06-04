@@ -248,8 +248,8 @@ body {
 #product-container {
     width: 100%;
     height: 94%;
-    background-color:white;
-    overflow-y:auto;
+    background-color: white;
+    overflow-y: auto;
 }
 
 #items-container {
@@ -269,8 +269,8 @@ body {
 #checkout-container {
     height: 35%;
     border-top-style: solid;
-    border-top-width: 1px;
-    border-top-color: #000080;
+    border-top-width: 3px;
+    border-top-color: #455775;
 }
 
 #price-container {
@@ -287,11 +287,18 @@ body {
 .checkout-button {
     border-color: #455775 !important;
     background-color: transparent !important;
-    color: #344E5C !important;
+    color: #455775 !important;
     border-radius: 0;
+    margin: 3px !important;
 }
-
-    .checkout-button:hover, .checkout-button:active, .checkout-button:focus {
+.right-button {
+    border-color: #455775 !important;
+    background-color: #455775 !important;
+    color: white !important;
+    border-radius: 0;
+    margin: 0 !important;
+}
+.checkout-button:hover, .checkout-button:active, .checkout-button:focus {
         background-color: #455775 !important;
         border-color: #455775 !important;
         color: white !important;
@@ -432,4 +439,40 @@ td{
 #option-edit-container{
     max-height:200px;
     overflow-y:auto;
+}
+.orderitems-container{
+    height:1000px;
+    overflow-y: auto;
+}
+#checkout-buttons-container {
+    width: 100%;
+    justify-content:end;
+}
+#checkout-button{
+    width:50% !important;
+    margin-right:1px !important;
+}
+#tableselect-button {
+    width: 50% !important;
+    margin-left: 1px !important;
+}
+#left-product{
+    height:100%;
+}
+#search-input{
+    width:90%;
+    margin: 0 !important;
+}
+.search-container{
+    width:100%;
+}
+#clear-search{
+    vertical-align:sub;
+    cursor: pointer;
+}
+#selectedtables-container{
+    margin-left:2.2rem;
+}
+.table-item{
+    margin: 3px;
 }

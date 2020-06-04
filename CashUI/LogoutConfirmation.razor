@@ -1,0 +1,44 @@
+﻿@inject IModalService ModalService
+@inject IToastService ToastService
+
+
+
+<div class="modal-content">
+    <div class="modal-body">
+        <p>Weet je zeker dat je wilt uitloggen?</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn  btn-primary shadow-sm checkout-button m-1" @onclick="ConfirmClose">Ja</button>
+        <button class="btn  btn-primary shadow-sm checkout-button m-1" @onclick="CancelClose">Nee</button>
+    </div>
+</div>
+
+
+
+
+@code {
+
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
+    bool Confirm;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+    public void ConfirmClose()
+    {
+        bool Confirm = true;
+
+        BlazoredModal.Close(ModalResult.Ok(Confirm));
+
+    }
+    public void CancelClose()
+    {
+        bool Confirm = false;
+
+        BlazoredModal.Cancel();
+
+    }
+
+}

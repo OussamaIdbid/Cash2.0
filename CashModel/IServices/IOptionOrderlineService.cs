@@ -8,5 +8,7 @@ namespace CashModel
     public interface IOptionOrderlineService
     {
         Task<bool> CreateOptionOrderline(OptionOrderline optionOrderline);
+        Task<IEnumerable<OptionOrderline>> GetOrderlineOptions();
+
     }
 }

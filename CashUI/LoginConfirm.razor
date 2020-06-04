@@ -1,0 +1,113 @@
+﻿@using CashModel
+@inject NavigationManager NavigationManager
+@inject IToastService ToastService
+@inject IUserService UserService
+@inject IModalService ModalService
+
+
+
+                <div class="card-body">
+                    <h5 class="card-title text-center">Confirm details</h5>
+                    <form class="form-signin">
+                        <div class="form-label-group">
+                            <input @bind="@Username" id="inputEmail" autocomplete="off" class="form-control" placeholder="Username" required autofocus disabled>
+                            <label for="inputEmail">Username</label>
+                        </div>
+
+                        <div class="form-label-group">
+                            <input @bind="@password" id="inputPassword" type="@Toggle" class="form-control" placeholder="Password" required>
+                            <label for="inputPassword">Password</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" id="checkbox-password" @onclick="(() => ToggleVisibility())" />
+                            <label class="form-check-label" for="checkbox-password">Show password</label>
+                        </div>
+
+                        <div class="btn btn-lg btn-light btn-block text-uppercase" @onclick="(() => Auth())">confirm</div>
+                        <hr class="my-4">
+                    </form>
+
+                </div>
+
+@code{
+
+
+    string Username = User.CurrentUsername;
+    string password;
+    bool changeType = true;
+    string Toggle => changeType ? "password" : null;
+
+    IEnumerable<User> users = new List<User>();
+
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        users = await UserService.GetUsers();
+
+
+    }
+
+    public void ToggleVisibility()
+    {
+        changeType = !changeType;
+    }
+    protected async Task Auth()
+    {
+        bool isWrong = true;
+
+        if (password == null)
+        {
+            ToastService.ShowToast(ToastLevel.Info, "please fill in the required fields");
+
+        }
+        else
+        {
+            foreach (var item in users)
+            {
+
+                if ((item.Username).ToLower() == (Username).ToLower() && decryptString(item.Password) == password)
+                {
+                    Console.WriteLine("Right password");
+
+                    isWrong = false;
+
+                }
+
+            }
+
+            if (isWrong)
+            {
+                ToastService.ShowToast(ToastLevel.Error, "Password");
+            }
+            else
+            {
+
+                BlazoredModal.Close(ModalResult.Ok(isWrong));
+
+            }
+
+        }
+
+
+
+
+    }
+    public string decryptString(string encrString)
+    {
+        byte[] b;
+        string decrypted;
+
+        try
+        {
+            b = Convert.FromBase64String(encrString);
+            decrypted = System.Text.ASCIIEncoding.ASCII.GetString(b);
+        }
+        catch (FormatException fe)
+        {
+            decrypted = "";
+        }
+        return decrypted;
+    }
+}

@@ -1,0 +1,92 @@
+﻿@inject IOrderService OrderService
+@inject IOrderitemService OrderItemService
+@inject IProductService ProductService
+@inject IOptionService OptionService
+@inject IModalService ModalService
+@inject IOptionOrderlineService OptionOrderlineService
+
+
+@if (orders == null)
+{
+    <p>No Orders</p>
+}
+else
+{ <div class="orderitems-container container d-flex flex-row">
+
+        @foreach (var item in orders)
+        {
+      <div class="m-2">
+          <h6>Ordernr: #@item.Id</h6>
+          <div class="bg-white">
+              <table class="table">
+                  <thead>
+                      <tr>
+                          <th>Product</th>
+                          <th>Prijs</th>
+                          <th>Q</th>
+                          <th>Totaal</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      @foreach (var item1 in orderItems.Where(x => x.OrderId == item.Id))
+                      {
+                          <tr>
+                              @if (item1.Product == null)
+                              {
+                                  <td><u>Product was removed</u></td>
+                                  <td><u>Product was removed</u></td>
+                              }
+                              else
+                              {
+                                  <td>@item1.Product.Name</td>
+                                  <td>@item1.Product.Price </td>
+                              }
+                              <td>@item1.Quantity</td>
+                              <td>€@item1.TotalPrice</td>
+                              <td class="order-line" @onclick="(() => ShowOptions(item1))">options</td>
+
+
+                          </tr>
+                      }
+                  </tbody>
+              </table>
+          </div>
+          <p>Totaal: €@item.TotalPrice</p>
+      </div>
+        }
+    </div>
+}
+
+@code {
+
+
+    IEnumerable<Order> orders;
+    IEnumerable<OrderItem> orderItems;
+    IEnumerable<Product> products;
+    IEnumerable<Option> options;
+    IEnumerable<OptionOrderline> optionOrderlines;
+
+    string bruh = "product empty";
+
+    protected override async Task OnInitializedAsync()
+    {
+        orders = await OrderService.GetOrders();
+        orderItems = await OrderItemService.GetOrderitems();
+        products = await ProductService.GetProducts();
+        options = await OptionService.GetOptions();
+        optionOrderlines = await OptionOrderlineService.GetOrderlineOptions();
+        foreach (var item in orderItems)
+        {
+            item.Product = products.FirstOrDefault(x => x.Id == item.ProductId);
+            Console.WriteLine("Added");
+            item.Options = new List<Option>();
+        }
+
+    }
+    public void ShowOptions(OrderItem orderitem)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(OrderlineOptions.options), orderitem.Options);
+        var optionsModal = ModalService.Show<OrderlineOptions>("Selected Options", parameters);
+    }
+}

@@ -1,5 +1,6 @@
 ﻿@using CashUI
 @using CashModel
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject NavigationManager NavigationManager
 @inject IModalService ModalService
 @inject IOperationService OperationService
@@ -7,19 +8,27 @@
 @inject ITableService TableService
 @page "/cash"
 
-@if (User.IsloggedIn == false)
+@if (!User.IsloggedIn)
 {
     <p>not logged in</p>
 }
 else
 {
-    <div class="d-flex flex-row">
-        @foreach (var item in SelectedTables)
+    <div id="selectedtables-container" class="d-flex flex-row">
+        @if (SelectedTables == null)
         {
-            <button type="button" @onclick="@(() => Activate(item))" class="btn btn btn-primary shadow-sm checkout-button m-1">@item.TableNumber </button>
-            <button type="button" @onclick="@(() => CloseTable(item))" class="btn btn btn-primary shadow-sm checkout-button m-1"> Close table</button>
 
         }
+        else
+        {
+            @foreach (var item in SelectedTables)
+            {
+                <button type="button" @onclick="@(() => Activate(item))" class="btn btn btn-primary shadow-sm checkout-button m-1 table-item">Table: @item.TableNumber </button>
+                <button type="button" @onclick="@(() => CloseTable(item))" class="btn btn btn-primary shadow-sm checkout-button m-1 table-item"> Close table</button>
+
+            }
+        }
+
     </div>
     <div class="row" id="cash-container">
         <div id='left' class='rounded col-md-8'>
@@ -30,15 +39,15 @@ else
             <Checkout>
                 <OrderItems OnProductRemoved="ProductRemoved" OnPriceReduced="PriceReduced" OnPriceIncreased="PriceIncreased" orderItems="@SelectedTable.orderItems"></OrderItems>
             </Checkout>
-            <div id='checkout-container' class="rounded">
+            <div id='checkout-container' class="rounded d-flex flex-column justify-content-end">
                 <div id="price-container" class='text-muted'>
                     <p id='subtotal'>Subtotal €@RoundedTotalPrice</p>
                     <p id='discount'>Discount €0</p>
                     <p id='total'>Total €@RoundedTotalPrice</p>
                 </div>
-                <div id="checkout-buttons-container">
-                    <button type="button" @onclick="(() => Checkout())" id="pin-button" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Checkout</button>
-                    <button type="button" @onclick="@(() => TableSelect())" class="btn btn-lg  btn-primary shadow-sm checkout-button m-1">Tables </button>
+                <div id="checkout-buttons-container" class="">
+                    <button type="button" @onclick="(() => Checkout())" id="checkout-button" class="btn btn-lg  btn-primary shadow-sm right-button m-1 ">Checkout</button>
+                    <button type="button" @onclick="@(() => TableSelect())" id="tableselect-button" class="btn btn-lg  btn-primary shadow-sm right-button m-1">Tables </button>
 
                 </div>
             </div>
@@ -58,32 +67,29 @@ else
     string Username = User.CurrentUsername;
     public List<OrderItem> CurrentList1 = new List<OrderItem>();
     public List<OrderItem> NewOrderlist = new List<OrderItem>();
-    public List<Table> SelectedTables = new List<Table>();
+    string key = "Tables";
+    public List<Table> SelectedTables { get; set; }
+    string key1 = "Table";
     public Table SelectedTable = new Table();
 
     public double totalPrice;
     public double RoundedTotalPrice;
 
-
-
     protected override async Task OnInitializedAsync()
     {
+
         operation.UserId = User.CurrentId;
-        CurrentList1 = new List<OrderItem>();
         tables = await TableService.GetTables();
         Table.CurrentTable = 0;
 
-        foreach (var item in tables)
-        {
-            item.status = Table.Status.Open;
-            await TableService.EditTable(item.Id, item);
-        }
+        SelectedTables = await localStorage.GetItemAsync<List<Table>>(key);
 
     }
 
+
     [Parameter] public EventCallback<List<OrderItem>> OnList2Changed { get; set; }
 
-    public void Activate(Table table)
+    public async Task Activate(Table table)
     {
         foreach (var item in SelectedTables)
         {
@@ -96,7 +102,8 @@ else
         RoundedTotalPrice = 0;
         totalPrice = 0;
         Table.CurrentTable = table.Id;
-        ToastService.ShowToast(ToastLevel.Info, "Table " + table.Id + " is selected");
+        ToastService.ShowToast(ToastLevel.Info, "Table " + table.TableNumber + " is selected");
+
 
 
         if (SelectedTable.orderItems == null)
@@ -115,6 +122,9 @@ else
                 RoundedTotalPrice = Math.Round(totalPrice, 2);
             }
         }
+
+        //await localStorage.SetItemAsync(key1, SelectedTable);
+
     }
     public async Task CloseTable(Table table)
     {
@@ -141,8 +151,13 @@ else
                 table.active = false;
                 SelectedTable = new Table();
                 Table.CurrentTable = 0;
+                RoundedTotalPrice = 0;
+                totalPrice = 0;
             }
         }
+
+        await localStorage.SetItemAsync(key, SelectedTables);
+
 
 
     }
@@ -151,12 +166,13 @@ else
 
         Console.WriteLine(List.Product.Name);
         //CurrentList1.Add(List);
-        SelectedTable.orderItems.Add(List);
+        SelectedTables.Find(((x => x.Id == SelectedTable.Id))).orderItems.Add(List);
+        //SelectedTable.orderItems.Add(List);
         foreach (var item in CurrentList1)
         {
             Console.WriteLine(item.Product.Name);
         }
-        await OnList2Changed.InvokeAsync(SelectedTable.orderItems);
+        await OnList2Changed.InvokeAsync(SelectedTables.Find(((x => x.Id == SelectedTable.Id))).orderItems);
         Product.TotalPrice = 0;
         totalPrice = 0;
         foreach (var item in SelectedTable.orderItems)
@@ -164,6 +180,7 @@ else
             totalPrice += item.TotalPrice;
             RoundedTotalPrice = Math.Round(totalPrice, 2);
         }
+        await localStorage.SetItemAsync(key, SelectedTables);
 
 
     }
@@ -225,7 +242,7 @@ else
             }
             else
             {
-                foreach(var item in (List< Table>)result.Data)
+                foreach (var item in (List<Table>)result.Data)
                 {
 
                     if (SelectedTables.Exists(x => x.Id == item.Id))
@@ -241,6 +258,8 @@ else
 
             }
             //SelectedTables = (List<Table>)result.Data;
+            await localStorage.SetItemAsync(key, SelectedTables);
+
         }
     }
     public async Task Checkout()
@@ -274,6 +293,7 @@ else
                 SelectedTable = new Table();
                 Table.CurrentTable = 0;
 
+                await localStorage.SetItemAsync(key, SelectedTables);
 
 
             }

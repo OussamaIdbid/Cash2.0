@@ -18,12 +18,12 @@ namespace CashModel
         {
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                const string query = @"insert into dbo.[Order] (TotalPrice,TableId) values (@TotalPrice,@TableId)";
+                const string query = @"insert into dbo.[Order] (TotalPrice,TableId,paymentMethod) values (@TotalPrice,@TableId,@paymentMethod)";
                 if (conn.State == ConnectionState.Closed)
                     conn.Open();
                 try
                 {
-                    await conn.ExecuteAsync(query, new {order.TotalPrice, order.TableId}, commandType: CommandType.Text);
+                    await conn.ExecuteAsync(query, new {order.TotalPrice, order.TableId, order.paymentMethod}, commandType: CommandType.Text);
                 }
                 catch (Exception ex)
                 {

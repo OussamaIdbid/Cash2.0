@@ -7,32 +7,42 @@
 
 
 
-<div class="">
-    <div class="product-container">
+    <div id="left-product" class=" d-flex flex-column">
+        <div class="product-container">
 
 
-        @if (products == null)
-        {
-            <p><em>Loading...</em></p>
-        }
-        else
-        {
-            @foreach (var item in products)
+            @if (products == null)
             {
-
-                <p class="product-button rounded shadow-sm" style="background-color:@item.Color; color:@item.textColor;" @onclick="(() => showName(item))">
-                    @item.Name
-                </p>
-
+                <p><em>Loading...</em></p>
             }
-        }
+            else
+            {
+                @foreach (var item in products)
+                {
+
+                    <p class="product-button rounded shadow-sm" style="background-color:@item.Color; color:@item.textColor;" @onclick="(() => GetProduct(item))">
+                        @item.Name
+                    </p>
+
+                }
+            }
+
+        </div>
+
+        <div class="search-container mt-auto">
+            <span @onclick="(() => ClearSearch())" class="material-icons" id="clear-search">
+                clear
+            </span>
+            <input id="search-input" @bind="@SearchQuery" type="text" placeholder="Search Product" name="search">
+            <button class="checkout-button btn btn-sm" @onclick="(() => SearchProduct())">Search</button>
+        </div>
     </div>
 
-</div>
 
 @code {
     [Parameter]
     public int Id { get; set; }
+    string SearchQuery;
     Operation operation = new Operation();
 
     public Product SelectedProduct { get; set; }
@@ -44,13 +54,18 @@
     [Parameter] public EventCallback<OrderItem> OnListChanged { get; set; }
 
     IEnumerable<Product> products;
+    IEnumerable<Product> SearchedProducts = new List<Product>();
     Category category;
 
     protected override async Task OnParametersSetAsync()
     {
 
         products = await ProductService.GetProductsByCategory(Id);
-
+        if (SearchedProducts.Any())
+        {
+            Console.WriteLine("not empty");
+            products = SearchedProducts;
+        }
 
         foreach (var item in products)
         {
@@ -60,8 +75,51 @@
         }
 
     }
+    public async Task SearchProduct()
+    {
 
-    public async Task showName(Product product)
+        if(SearchQuery != null)
+        {
+            SearchedProducts = await ProductService.SearchProductsByCategory(Id, SearchQuery);
+
+            if (SearchedProducts.Any())
+            {
+                products = SearchedProducts;
+                foreach (var item in products)
+                {
+                    category = await CategoryService.SingleCategory(item.CategoryId);
+
+                    item.Color = category.Color;
+                }
+            }
+            else
+            {
+                ToastService.ShowToast(ToastLevel.Info, "No products found");
+
+            }
+
+        }
+        else
+        {
+            ToastService.ShowToast(ToastLevel.Info, "No search query found");
+
+        }
+
+
+    }
+    public async Task ClearSearch()
+    {
+        products = await ProductService.GetProductsByCategory(Id);
+        SearchedProducts = new List<Product>();
+        SearchQuery = null;
+        foreach (var item in products)
+        {
+            category = await CategoryService.SingleCategory(item.CategoryId);
+
+            item.Color = category.Color;
+        }
+    }
+    public async Task GetProduct(Product product)
     {
         IEnumerable<Table> tables = await TableService.GetTables();
         /*foreach (var item in tables)
@@ -97,6 +155,8 @@
                 //orderItems.Add(SubmittedItem);
                 OnListChanged.InvokeAsync(SubmittedItem);
                 SendOperation();
+
+
             }
         }
         else
@@ -109,7 +169,7 @@
 
     public void OrderSubmit(OrderItem orderItem)
     {
-        
+
         OnListChanged.InvokeAsync(orderItem);
     }
     protected async Task SendOperation()
