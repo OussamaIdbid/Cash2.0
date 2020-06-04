@@ -24,8 +24,8 @@ else
                 @foreach (var item in tables)
                 {
                     <tr>
-                        <td>@item.TableId</td>
-                        <td>@item.TableName</td>
+                        <td>@item.Id</td>
+                        <td>@item.TableNumber</td>
                         <td><button class="btn btn-sm btn-primary shadow-sm checkout-button m-1" @onclick="(() => Edit(item))"> Edit</button></td>
                         <td><button class="btn btn-sm btn-primary shadow-sm checkout-button m-1" @onclick="(() => Delete(item))">Delete</button></td>
                     </tr>
@@ -47,18 +47,18 @@ else
 }
 
 @code {
-    IEnumerable<Table> categories = new List<Table>();
+    IEnumerable<Table> tables = new List<Table>();
     int page = 1;
     string NextBtnVisibility;
     string PreviousBtnVisibility;
 
     protected override async Task OnParametersSetAsync()
     {
-        Pager pager = new Pager(page);
+        Pager pager = new Pager(page, 10);
 
         tables = await TableService.GetPagedTables(pager);
 
-        Pager pagerNext = new Pager((page + 1));
+        Pager pagerNext = new Pager((page + 1), 10);
 
         IEnumerable<Table> NextPageTable = await TableService.GetPagedTables(pagerNext);
 
@@ -82,13 +82,13 @@ else
     public async Task NextPage()
     {
         page++;
-        Pager pager = new Pager(page);
+        Pager pager = new Pager(page, 10 );
         tables = await TableService.GetPagedTables(pager);
         /*foreach (var item in products)
         {
             Console.WriteLine(item.Id);
         }*/
-        Pager pagerNext = new Pager((page + 1));
+        Pager pagerNext = new Pager((page + 1), 10);
         IEnumerable<Table> NextPageTables = await TableService.GetPagedTables(pagerNext);
 
         if (page > 1)
@@ -106,7 +106,7 @@ else
     public async Task PreviousPage()
     {
         page--;
-        Pager pager = new Pager(page);
+        Pager pager = new Pager(page, 10);
         tables = await TableService.GetPagedTables(pager);
         /*foreach (var item in products)
         {
@@ -125,7 +125,7 @@ else
     {
 
         var parameters = new ModalParameters();
-        parameters.Add(nameof(DeleteTable.Id), table.TableId);
+        parameters.Add(nameof(DeleteTable.Id), table.Id);
         var tableModal = ModalService.Show<DeleteTable>("Delete", parameters);
         var result = await tableModal.Result;
 
@@ -137,8 +137,8 @@ else
         {
             Operation operation = new Operation();
             operation.UserId = User.CurrentId;
-            operation.Description = User.CurrentUsername + " has deleted " + table.TableName + " from database";
-            Pager pager = new Pager(page);
+            operation.Description = User.CurrentUsername + " has deleted " + table.TableNumber + " from database";
+            Pager pager = new Pager(page, 10);
 
             tables = await TableService.GetPagedTables(pager);
             Console.WriteLine(page);
@@ -150,7 +150,7 @@ else
 
                 Console.WriteLine("this page is empty");
                 page--;
-                Pager pager2 = new Pager(page);
+                Pager pager2 = new Pager(page, 10);
                 tables = await TableService.GetPagedTables(pager2);
 
                 if (page == 1)
@@ -162,7 +162,7 @@ else
 
             }
 
-            ToastService.ShowToast(ToastLevel.Info, "Deleted " + table.TableName + "from database");
+            ToastService.ShowToast(ToastLevel.Info, "Deleted " + table.TableNumber + "from database");
 
             await OperationService.CreateOperation(operation);
         }
@@ -173,7 +173,7 @@ else
     {
 
         var parameters = new ModalParameters();
-        parameters.Add(nameof(EditTable.Id), table.TableId);
+        parameters.Add(nameof(EditTable.Id), table.Id);
         var tableModal = ModalService.Show<EditTable>("Edit", parameters);
         var result = await tableModal.Result;
 
@@ -185,10 +185,10 @@ else
         {
             Operation operation = new Operation();
             operation.UserId = User.CurrentId;
-            operation.Description = User.CurrentUsername + " has edited " + table.TableName + " in database";
-            Pager pager = new Pager(page);
+            operation.Description = User.CurrentUsername + " has edited " + table.TableNumber + " in database";
+            Pager pager = new Pager(page, 10);
             tables = await TableService.GetPagedTables(pager);
-            ToastService.ShowToast(ToastLevel.Info, "Edited " + table.TableName + " in database");
+            ToastService.ShowToast(ToastLevel.Info, "Edited " + table.TableNumber + " in database");
 
             await OperationService.CreateOperation(operation);
         }
@@ -208,10 +208,10 @@ else
             Operation operation = new Operation();
             operation.UserId = User.CurrentId;
             operation.Description = User.CurrentUsername + " has added a table";
-            Pager pager = new Pager(page);
+            Pager pager = new Pager(page, 10);
             tables = await TableService.GetPagedTables(pager);
 
-            Pager pagerNext = new Pager((page + 1));
+            Pager pagerNext = new Pager((page + 1), 10);
             IEnumerable<Table> NextPageTables = await TableService.GetPagedTables(pagerNext);
 
             if (NextPageTables.Any())

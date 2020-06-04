@@ -4,16 +4,8 @@
 <div class="simple-form">
     <div class="form-group">
         <label for="name-field">Name</label>
-        <input @bind="@table.TableName" type="text" id="name-field" />
+        <input @bind="@table.TableNumber" type="text" id="name-field" />
     </div>
-
-    <div class="form-group">
-        <label for="price-field">Color</label>
-        <input @bind="@table.Color" type="text" id="price-field" />
-    </div>
-
-
-
 
     <button class="btn  btn-primary shadow-sm checkout-button m-1" @onclick="ConfirmClose">Submit</button>
     <button class="btn  btn-primary shadow-sm checkout-button m-1" @onclick="CancelClose">Cancel</button>
@@ -23,7 +15,7 @@
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
     [Parameter] public int Id { get; set; }
 
-    Table category = new Table();
+    Table table = new Table();
 
 
 
