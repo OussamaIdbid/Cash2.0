@@ -38,16 +38,46 @@ namespace CashModel
             }
             return true;
         }
-        /*public async Task<bool> DeleteCategory(int CategoryId)
+        public async Task<IEnumerable<Table>> GetPagedTables(Pager pager)
         {
+            IEnumerable<Table> tables;
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                const string query = @"delete from dbo.Category where CategoryId=@CategoryId";
+
+                var query = @"SELECT * FROM cash.dbo.[Table] order by Id OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
+
+
                 if (conn.State == ConnectionState.Closed)
                     conn.Open();
                 try
                 {
-                    await conn.ExecuteAsync(query, new { CategoryId }, commandType: CommandType.Text);
+                    tables = await conn.QueryAsync<Table>(query, pager);
+
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+                }
+
+            }
+            return tables;
+
+        }
+        public async Task<bool> DeleteTable(int Id)
+        {
+            using (var conn = new SqlConnection(_configuration.Value))
+            {
+                const string query = @"delete from dbo.Category where Id=@Id";
+                if (conn.State == ConnectionState.Closed)
+                    conn.Open();
+                try
+                {
+                    await conn.ExecuteAsync(query, new { Id }, commandType: CommandType.Text);
                 }
                 catch (Exception ex)
                 {
@@ -60,17 +90,17 @@ namespace CashModel
                 }
             }
             return true;
-        }*/
+        }
         public async Task<bool> EditTable(int Id, Table table)
         {
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                const string query = @"update dbo.[Table] set Status = @Status where Id=@Id";
+                const string query = @"update dbo.[Table] set TableNumber = @TableNumber where Id=@Id";
                 if (conn.State == ConnectionState.Closed)
                     conn.Open();
                 try
                 {
-                    await conn.ExecuteAsync(query, new { table.status, Id }, commandType: CommandType.Text);
+                    await conn.ExecuteAsync(query, new { table.TableNumber, Id }, commandType: CommandType.Text);
                 }
                 catch (Exception ex)
                 {
@@ -113,19 +143,19 @@ namespace CashModel
             return tables;
         }
 
-        /*public async Task<Category> SingleCategory(int CategoryId)
+        public async Task<Table> SingleTable(int Id)
         {
-            Category category = new Category();
+            Table table = new Table();
 
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                const string query = @"select * from dbo.Category where CategoryId =@CategoryId";
+                const string query = @"select * from dbo.Category where Id =@Id";
 
                 if (conn.State == ConnectionState.Closed)
                     conn.Open();
                 try
                 {
-                    category = await conn.QueryFirstOrDefaultAsync<Category>(query, new { CategoryId }, commandType: CommandType.Text);
+                    table = await conn.QueryFirstOrDefaultAsync<Table>(query, new { Id }, commandType: CommandType.Text);
                 }
                 catch (Exception ex)
                 {
@@ -137,8 +167,8 @@ namespace CashModel
                         conn.Close();
                 }
             }
-            return category;
-        }*/
+            return table;
+        }
 
 
 

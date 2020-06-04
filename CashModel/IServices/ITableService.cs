@@ -12,8 +12,8 @@ namespace CashModel
         Task<bool> CreateTable(Table table);
         Task<bool> EditTable(int id, Table table);
 
-        Task<Table> SingleTable(int tableId);
-        Task<bool> DeleteTable(int TableId);
+        Task<Table> SingleTable(int Id);
+        Task<bool> DeleteTable(int Id);
         Task<IEnumerable<Table>> GetPagedTables(Pager pager);
     }
 }
