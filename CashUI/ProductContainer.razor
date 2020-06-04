@@ -20,7 +20,7 @@
                 @foreach (var item in products)
                 {
 
-                    <p class="product-button rounded shadow-sm" style="background-color:@item.Color; color:@item.textColor;" @onclick="(() => showName(item))">
+                    <p class="product-button rounded shadow-sm" style="background-color:@item.Color; color:@item.textColor;" @onclick="(() => GetProduct(item))">
                         @item.Name
                     </p>
 
@@ -34,7 +34,7 @@
                 clear
             </span>
             <input id="search-input" @bind="@SearchQuery" type="text" placeholder="Search Product" name="search">
-            <button class="checkout-button btn btn-md" @onclick="(() => SearchProduct())">Search</button>
+            <button class="checkout-button btn btn-sm" @onclick="(() => SearchProduct())">Search</button>
         </div>
     </div>
 
@@ -54,14 +54,18 @@
     [Parameter] public EventCallback<OrderItem> OnListChanged { get; set; }
 
     IEnumerable<Product> products;
-    IEnumerable<Product> SearchedProducts;
+    IEnumerable<Product> SearchedProducts = new List<Product>();
     Category category;
 
     protected override async Task OnParametersSetAsync()
     {
 
         products = await ProductService.GetProductsByCategory(Id);
-
+        if (SearchedProducts.Any())
+        {
+            Console.WriteLine("not empty");
+            products = SearchedProducts;
+        }
 
         foreach (var item in products)
         {
@@ -106,6 +110,7 @@
     public async Task ClearSearch()
     {
         products = await ProductService.GetProductsByCategory(Id);
+        SearchedProducts = new List<Product>();
         SearchQuery = null;
         foreach (var item in products)
         {
@@ -114,7 +119,7 @@
             item.Color = category.Color;
         }
     }
-    public async Task showName(Product product)
+    public async Task GetProduct(Product product)
     {
         IEnumerable<Table> tables = await TableService.GetTables();
         /*foreach (var item in tables)
@@ -150,6 +155,8 @@
                 //orderItems.Add(SubmittedItem);
                 OnListChanged.InvokeAsync(SubmittedItem);
                 SendOperation();
+
+
             }
         }
         else
