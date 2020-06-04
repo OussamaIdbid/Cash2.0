@@ -1,0 +1,51 @@
+﻿@inject IModalService ModalService
+@inject ITableService TableService
+@inject IToastService ToastService
+<div class="simple-form">
+    <div class="form-group">
+        <label for="name-field">Name</label>
+        <input @bind="@table.TableName" type="text" id="name-field" />
+    </div>
+
+    <div class="form-group">
+        <label for="price-field">Color</label>
+        <input @bind="@table.Color" type="text" id="price-field" />
+    </div>
+
+
+
+
+    <button class="btn  btn-primary shadow-sm checkout-button m-1" @onclick="ConfirmClose">Submit</button>
+    <button class="btn  btn-primary shadow-sm checkout-button m-1" @onclick="CancelClose">Cancel</button>
+</div>
+@code {
+
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
+    [Parameter] public int Id { get; set; }
+
+    Table category = new Table();
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        table = await TableService.SingleTable(Id);
+
+    }
+    public async Task ConfirmClose()
+    {
+
+        await TableService.EditTable(Id, table);
+
+        BlazoredModal.Close();
+
+    }
+    public void CancelClose()
+    {
+
+
+        BlazoredModal.Cancel();
+
+    }
+
+}

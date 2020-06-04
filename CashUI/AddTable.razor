@@ -1,0 +1,50 @@
+﻿@using CashModel
+@using CashUI
+@inject ITableService TableService
+@inject IModalService ModalService
+
+
+<h2>Create Table</h2>
+<hr />
+<div class="simple-form">
+
+    <div class="form-group">
+        <label for="name-field">Name</label>
+        <input @bind="@table.TableName" type="text" id="name-field" />
+    </div>
+
+    <div class="form-group">
+        <label for="price-field">Color</label>
+        <input @bind="@table.Color" type="text" id="price-field" />
+    </div>
+
+    <button class="btn  btn-primary shadow-sm checkout-button m-1" @onclick="ConfirmClose">Submit</button>
+    <button class="btn  btn-primary shadow-sm checkout-button m-1" @onclick="CancelClose">Cancel</button>
+</div>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
+    Table table = new Table();
+
+
+    int LatestId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+    public async Task ConfirmClose()
+    {
+        table.TextColor = "white";
+        await TableService.CreateTable(table);
+
+
+        BlazoredModal.Close();
+
+    }
+    public void CancelClose()
+    {
+        BlazoredModal.Cancel();
+
+    }
+}

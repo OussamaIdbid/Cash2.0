@@ -1,1 +1,229 @@
-﻿
+﻿@inject ITableService TableService
+@inject IModalService ModalService
+@inject IToastService ToastService
+@inject IOperationService OperationService
+
+@if (tables == null)
+{
+    <p>No tables</p>
+}
+else
+{
+    <div height="300px" class="container">
+        <button class="btn btn-sm btn-primary shadow-sm checkout-button m-1" @onclick="(() => Add())">Add table</button>
+
+        <table class="table bg-white m-3 shadow-sm ">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Table</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in tables)
+                {
+                    <tr>
+                        <td>@item.TableId</td>
+                        <td>@item.TableName</td>
+                        <td><button class="btn btn-sm btn-primary shadow-sm checkout-button m-1" @onclick="(() => Edit(item))"> Edit</button></td>
+                        <td><button class="btn btn-sm btn-primary shadow-sm checkout-button m-1" @onclick="(() => Delete(item))">Delete</button></td>
+                    </tr>
+                }
+
+            </tbody>
+
+
+        </table>
+        <div class="d-flex">
+            <button class="btn btn-sm btn-primary shadow-sm checkout-button m-1 align-self-start" style="visibility:@PreviousBtnVisibility;" @onclick="(() => PreviousPage())">Previous page</button>
+            <button class="btn btn-sm btn-primary shadow-sm checkout-button m-1 align-self-end" style="visibility:@NextBtnVisibility;" @onclick="(() => NextPage())">Next page</button>
+        </div>
+
+    </div>
+
+
+
+}
+
+@code {
+    IEnumerable<Table> categories = new List<Table>();
+    int page = 1;
+    string NextBtnVisibility;
+    string PreviousBtnVisibility;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Pager pager = new Pager(page);
+
+        tables = await TableService.GetPagedTables(pager);
+
+        Pager pagerNext = new Pager((page + 1));
+
+        IEnumerable<Table> NextPageTable = await TableService.GetPagedTables(pagerNext);
+
+        if (tables.Count() <= 10 && !NextPageTable.Any())
+        {
+            NextBtnVisibility = "hidden";
+            PreviousBtnVisibility = "hidden";
+        }
+        else if (NextPageTable.Any())
+        {
+            NextBtnVisibility = "visible";
+            PreviousBtnVisibility = "hidden";
+        }
+        else
+        {
+            NextBtnVisibility = "visible";
+            PreviousBtnVisibility = "hidden";
+        }
+        //  tables = await TableService.GetTables();
+    }
+    public async Task NextPage()
+    {
+        page++;
+        Pager pager = new Pager(page);
+        tables = await TableService.GetPagedTables(pager);
+        /*foreach (var item in products)
+        {
+            Console.WriteLine(item.Id);
+        }*/
+        Pager pagerNext = new Pager((page + 1));
+        IEnumerable<Table> NextPageTables = await TableService.GetPagedTables(pagerNext);
+
+        if (page > 1)
+        {
+            PreviousBtnVisibility = "visible";
+        }
+        if (!NextPageTables.Any())
+        {
+            NextBtnVisibility = "hidden";
+        }
+
+
+
+    }
+    public async Task PreviousPage()
+    {
+        page--;
+        Pager pager = new Pager(page);
+        tables = await TableService.GetPagedTables(pager);
+        /*foreach (var item in products)
+        {
+            Console.WriteLine(item.Id);
+        }*/
+        if (page == 1)
+        {
+            PreviousBtnVisibility = "hidden";
+        }
+
+        NextBtnVisibility = "visible";
+
+
+    }
+    public async Task Delete(Table table)
+    {
+
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(DeleteTable.Id), table.TableId);
+        var tableModal = ModalService.Show<DeleteTable>("Delete", parameters);
+        var result = await tableModal.Result;
+
+        if (result.Cancelled)
+        {
+            ToastService.ShowToast(ToastLevel.Info, "Delete cancelled");
+        }
+        else
+        {
+            Operation operation = new Operation();
+            operation.UserId = User.CurrentId;
+            operation.Description = User.CurrentUsername + " has deleted " + table.TableName + " from database";
+            Pager pager = new Pager(page);
+
+            tables = await TableService.GetPagedTables(pager);
+            Console.WriteLine(page);
+            Console.WriteLine(tables.Count());
+
+            if (tables.Count() == 0)
+            {
+
+
+                Console.WriteLine("this page is empty");
+                page--;
+                Pager pager2 = new Pager(page);
+                tables = await TableService.GetPagedTables(pager2);
+
+                if (page == 1)
+                {
+                    PreviousBtnVisibility = "hidden";
+                    NextBtnVisibility = "hidden";
+
+                }
+
+            }
+
+            ToastService.ShowToast(ToastLevel.Info, "Deleted " + table.TableName + "from database");
+
+            await OperationService.CreateOperation(operation);
+        }
+
+
+    }
+    public async Task Edit(Table table)
+    {
+
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(EditTable.Id), table.TableId);
+        var tableModal = ModalService.Show<EditTable>("Edit", parameters);
+        var result = await tableModal.Result;
+
+        if (result.Cancelled)
+        {
+            ToastService.ShowToast(ToastLevel.Info, "Edit cancelled");
+        }
+        else
+        {
+            Operation operation = new Operation();
+            operation.UserId = User.CurrentId;
+            operation.Description = User.CurrentUsername + " has edited " + table.TableName + " in database";
+            Pager pager = new Pager(page);
+            tables = await TableService.GetPagedTables(pager);
+            ToastService.ShowToast(ToastLevel.Info, "Edited " + table.TableName + " in database");
+
+            await OperationService.CreateOperation(operation);
+        }
+    }
+    public async Task Add()
+    {
+        var parameters = new ModalParameters();
+        var productModal = ModalService.Show<AddTable>("Add");
+        var result = await productModal.Result;
+
+        if (result.Cancelled)
+        {
+            ToastService.ShowToast(ToastLevel.Info, "Add cancelled");
+        }
+        else
+        {
+            Operation operation = new Operation();
+            operation.UserId = User.CurrentId;
+            operation.Description = User.CurrentUsername + " has added a table";
+            Pager pager = new Pager(page);
+            tables = await TableService.GetPagedTables(pager);
+
+            Pager pagerNext = new Pager((page + 1));
+            IEnumerable<Table> NextPageTables = await TableService.GetPagedTables(pagerNext);
+
+            if (NextPageTables.Any())
+            {
+                NextBtnVisibility = "visible";
+
+            }
+
+            ToastService.ShowToast(ToastLevel.Info, "Table added");
+
+            await OperationService.CreateOperation(operation);
+        }
+    }
+}
+

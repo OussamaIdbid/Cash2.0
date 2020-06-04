@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace CashModel
 {
     public interface ITableService
@@ -11,8 +12,8 @@ namespace CashModel
         Task<bool> CreateTable(Table table);
         Task<bool> EditTable(int id, Table table);
 
-        //Task<IEnumerable<Product>> GetProductsByCategory(int categoryId);
-        //Task<Product> SingleProduct(int id);
-        //Task<bool> DeleteProduct(int id);
+        Task<Table> SingleTable(int tableId);
+        Task<bool> DeleteTable(int TableId);
+        Task<IEnumerable<Table>> GetPagedTables(Pager pager);
     }
 }
