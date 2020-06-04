@@ -27,7 +27,7 @@
     public async Task ConfirmClose()
     {
 
-        await TableService.EditTable(Id, table);
+        await TableService.EditTable(table.Id, table);
 
         BlazoredModal.Close();
 

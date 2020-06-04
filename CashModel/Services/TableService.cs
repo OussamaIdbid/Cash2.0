@@ -19,12 +19,12 @@ namespace CashModel
         {
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                const string query = @"insert into dbo.[Table] (Status) values (@Status)";
+                const string query = @"insert into dbo.[Table] (Status,TableNumber) values (@Status,@TableNumber)";
                 if (conn.State == ConnectionState.Closed)
                     conn.Open();
                 try
                 {
-                    await conn.ExecuteAsync(query, new { table.status }, commandType: CommandType.Text);
+                    await conn.ExecuteAsync(query, new { table.status, table.TableNumber }, commandType: CommandType.Text);
                 }
                 catch (Exception ex)
                 {
@@ -72,7 +72,7 @@ namespace CashModel
         {
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                const string query = @"delete from dbo.Category where Id=@Id";
+                const string query = @"delete from dbo.[Table] where Id=@Id";
                 if (conn.State == ConnectionState.Closed)
                     conn.Open();
                 try
@@ -149,7 +149,7 @@ namespace CashModel
 
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                const string query = @"select * from dbo.Category where Id =@Id";
+                const string query = @"select * from dbo.[Table] where Id =@Id";
 
                 if (conn.State == ConnectionState.Closed)
                     conn.Open();

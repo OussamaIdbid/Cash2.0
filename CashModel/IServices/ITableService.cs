@@ -10,7 +10,7 @@ namespace CashModel
     {
         Task<IEnumerable<Table>> GetTables();
         Task<bool> CreateTable(Table table);
-        Task<bool> EditTable(int id, Table table);
+        Task<bool> EditTable(int Id, Table table);
 
         Task<Table> SingleTable(int Id);
         Task<bool> DeleteTable(int Id);
