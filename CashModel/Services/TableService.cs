@@ -95,7 +95,7 @@ namespace CashModel
         {
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                const string query = @"update dbo.[Table] set TableNumber = @TableNumber where Id=@Id";
+                const string query = @"update dbo.[Table] set TableNumber = @TableNumber where Id = @Id";
                 if (conn.State == ConnectionState.Closed)
                     conn.Open();
                 try

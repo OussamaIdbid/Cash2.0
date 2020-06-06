@@ -2,6 +2,8 @@
 @using CashUI
 @inject IProductService ProductService
 @page "/productswap"
+
+<h6 class="config-header">Change product position by selecting 2 products you want to swap</h6>
 <div id="product-container" class='container bg-white m-3 shadow-sm'>
     <ConfigProductCategories OnIdChanged="IdChanged"></ConfigProductCategories>
     <CashUI.ConfigProducts OnListChanged="ListChanged" Id="SelectedId"></CashUI.ConfigProducts>

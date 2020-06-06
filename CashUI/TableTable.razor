@@ -9,6 +9,8 @@
 }
 else
 {
+    <h6 class="config-header">Tables</h6>
+
     <div height="300px" class="container">
         <button class="btn btn-sm btn-primary shadow-sm checkout-button m-1" @onclick="(() => Add())">Add table</button>
 
@@ -82,7 +84,7 @@ else
     public async Task NextPage()
     {
         page++;
-        Pager pager = new Pager(page, 10 );
+        Pager pager = new Pager(page, 10);
         tables = await TableService.GetPagedTables(pager);
         /*foreach (var item in products)
         {
