@@ -113,8 +113,8 @@ namespace CashModel
                 }
             }
             return true;
-        
 
+        }
         public async Task<IEnumerable<Table>> GetTables()
         {
             IEnumerable<Table> tables;
