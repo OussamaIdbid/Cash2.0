@@ -11,7 +11,7 @@ namespace CashModel
         public double TotalPrice { get; set; }
         public PaymentMethod paymentMethod { get; set; }
         public List<OrderItem> orderitems { get; set; }
-
+        public static int CurrentDiscount { get; set; } 
 
         public enum PaymentMethod {Cash, Pin }
     }

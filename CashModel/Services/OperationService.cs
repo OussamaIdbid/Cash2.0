@@ -37,52 +37,6 @@ namespace CashModel
             }
             return true;
         }
-        /*public async Task<bool> DeleteCategory(int CategoryId)
-        {
-            using (var conn = new SqlConnection(_configuration.Value))
-            {
-                const string query = @"delete from dbo.Category where CategoryId=@CategoryId";
-                if (conn.State == ConnectionState.Closed)
-                    conn.Open();
-                try
-                {
-                    await conn.ExecuteAsync(query, new { CategoryId }, commandType: CommandType.Text);
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-                finally
-                {
-                    if (conn.State == ConnectionState.Open)
-                        conn.Close();
-                }
-            }
-            return true;
-        }*/
-        /*public async Task<bool> EditCategory(int CategoryId, Category category)
-        {
-            using (var conn = new SqlConnection(_configuration.Value))
-            {
-                const string query = @"update dbo.Category set Name = @Name where CategoryId=@CategoryId";
-                if (conn.State == ConnectionState.Closed)
-                    conn.Open();
-                try
-                {
-                    await conn.ExecuteAsync(query, new { category.CategoryName, CategoryId }, commandType: CommandType.Text);
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-                finally
-                {
-                    if (conn.State == ConnectionState.Open)
-                        conn.Close();
-                }
-            }
-            return true;
-        }*/
 
         public async Task<IEnumerable<Operation>> GetOperations()
         {
@@ -141,32 +95,5 @@ namespace CashModel
             return operations;
 
         }
-
-        /*public async Task<Category> SingleCategory(int CategoryId)
-        {
-            Category category = new Category();
-
-            using (var conn = new SqlConnection(_configuration.Value))
-            {
-                const string query = @"select * from dbo.Category where CategoryId =@CategoryId";
-
-                if (conn.State == ConnectionState.Closed)
-                    conn.Open();
-                try
-                {
-                    category = await conn.QueryFirstOrDefaultAsync<Category>(query, new { CategoryId }, commandType: CommandType.Text);
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-                finally
-                {
-                    if (conn.State == ConnectionState.Open)
-                        conn.Close();
-                }
-            }
-            return category;
-        }*/
     }
 }

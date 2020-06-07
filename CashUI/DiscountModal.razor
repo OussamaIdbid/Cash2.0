@@ -1,0 +1,31 @@
+﻿@inject IModalService ModalService
+@inject IToastService ToastService
+    <div class="simple-form">
+
+        <div class="form-group">
+            <label for="name-field">Discount</label>
+            <input type="text" id="name-field" @bind="@discount" disabled />
+        </div>
+
+
+        <button class="btn  btn-primary shadow-sm checkout-button m-1" @onclick="(() => ConfirmDiscount())">Submit</button>
+        <button class="btn  btn-primary shadow-sm checkout-button m-1" @onclick="(() => CancelModal())">Cancel</button>
+
+    </div>
+@code {
+
+    public double discount;
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
+
+
+    public void ConfirmDiscount()
+    {
+        BlazoredModal.Close(ModalResult.Ok(discount));
+    }
+    public void CancelModal()
+    {
+        BlazoredModal.Cancel();
+    }
+
+
+}
