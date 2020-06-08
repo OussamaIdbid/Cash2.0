@@ -27,13 +27,21 @@ else
         <tbody>
             @foreach (var item in operations)
             {
-                <tr>
-                    <td>@item.Id</td>
-                    <td>@item.Description</td>
-                    <td>@users.FirstOrDefault(x => x.Id == item.UserId).Username</td>
-                    <td>@item.datetime</td>
+                if ((int)item.UserId == 0)
+                {
+                    <tr><p>User removed</p></tr>
+                }
+                else
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.Description</td>
+                        <td>@users.FirstOrDefault(x => x.Id == item.UserId).Username</td>
+                        <td>@item.datetime</td>
 
-                </tr>
+                    </tr>
+                }
+
             }
 
         </tbody>

@@ -95,12 +95,12 @@ namespace CashModel
         {
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                const string query = @"update dbo.[Table] set TableNumber = @TableNumber where Id = @Id";
+                const string query = @"update dbo.[Table] set TableNumber = @TableNumber, Status = @Status where Id = @Id";
                 if (conn.State == ConnectionState.Closed)
                     conn.Open();
                 try
                 {
-                    await conn.ExecuteAsync(query, new { table.TableNumber, Id }, commandType: CommandType.Text);
+                    await conn.ExecuteAsync(query, new { table.status, table.TableNumber, Id }, commandType: CommandType.Text);
                 }
                 catch (Exception ex)
                 {
