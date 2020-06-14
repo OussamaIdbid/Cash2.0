@@ -35,11 +35,17 @@
 
     public async Task ConfirmClose()
     {
-        category.TextColor = "white";  
-        await CategoryService.CreateCategory(category);
+        if(category.CategoryName != null || category.Color != null)
+        {
+            category.TextColor = "white";
+            await CategoryService.CreateCategory(category);
+            BlazoredModal.Close();
+        }
 
 
-        BlazoredModal.Close();
+
+
+
 
     }
     public void CancelClose()

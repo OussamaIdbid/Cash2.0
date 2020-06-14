@@ -479,3 +479,9 @@ td{
 .config-header{
     margin-left:2.25rem;
 }
+@media only screen and (max-width: 1280px) {
+    #search-input {
+        width: 87%;
+        
+    }
+}

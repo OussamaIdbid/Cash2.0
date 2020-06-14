@@ -9,7 +9,7 @@
 <div class="simple-form">
 
     <div class="form-group">
-        <label for="name-field">Name</label>
+        <label for="name-field">Number</label>
         <input @bind="@table.TableNumber" type="text" id="name-field" />
     </div>
 
@@ -27,15 +27,20 @@
 
     protected override async Task OnInitializedAsync()
     {
+        table.TableNumber = 0;
     }
 
     public async Task ConfirmClose()
     {
-        table.status = Table.Status.Open ;
-        await TableService.CreateTable(table);
+        if(table.TableNumber != 0)
+        {
+            table.status = Table.Status.Open;
+            await TableService.CreateTable(table);
 
 
-        BlazoredModal.Close();
+            BlazoredModal.Close();
+        }
+
 
     }
     public void CancelClose()

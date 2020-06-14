@@ -72,6 +72,7 @@
 @code {
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
     Product product = new Product();
+
     Option option = new Option();
     public List<Option> options = new List<Option>();
 
@@ -88,17 +89,24 @@
         LatestId = (products.Last().Id) + 1;
 
         option.ProductId = LatestId;
+        product.CategoryId = 0;
+        product.Price = 0;
     }
 
     public async Task ConfirmClose()
     {
-        await ProductService.CreateProduct(product);
-        foreach (var item in options)
+
+        if(product.CategoryId != 0  || product.Name != null || product.Price != 0 || product.Color != null)
         {
-            await OptionService.CreateOption(item);
+            await ProductService.CreateProduct(product);
+            foreach (var item in options)
+            {
+                await OptionService.CreateOption(item);
+            }
+
+            BlazoredModal.Close();
         }
 
-        BlazoredModal.Close();
 
     }
     public void CancelClose()
